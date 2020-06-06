@@ -1,6 +1,7 @@
 import Router from 'express';
 import { FacebookMessageParser } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
+import { getSecret } from '../services/Secrets';
 
 const router = Router();
 
@@ -17,11 +18,11 @@ router.post('/webhook', asyncUtil((req, res) => {
 }));
 
 // Adds support for GET requests to our webhook
-router.get('/webhook', (req, res) => {
+router.get('/webhook', asyncUtil(async (req, res) => {
 
   // Your verify token. Should be a random string.
-  const VERIFY_TOKEN = process.env.VERIFY_TOKEN
-
+  const VERIFY_TOKEN = await getSecret('VERIFY_TOKEN');
+    
   // Parse the query params
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
@@ -42,7 +43,7 @@ router.get('/webhook', (req, res) => {
       res.sendStatus(403);
     }
   }
-});
+}));
 
 
 export default router;
