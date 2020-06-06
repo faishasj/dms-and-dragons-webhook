@@ -5,6 +5,8 @@ name: Deploy
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -21,14 +23,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
       
-    - name: Publish app to Google App Engine
-      uses: zxyle/publish-gae-action@v2.3
+    - name: Setup gcloud environment
+      uses: GoogleCloudPlatform/github-actions@0.1.2
       with:
         # The service account email which will be used for authentication.
         service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
         # The service account key which will be used for authentication.
         service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-        # GAE project id
-        project_id: ${{ secrets.PROJECT_ID }}
-        # GAE variables to be written to the app.yaml file
-        gae_variables: ${{ secrets.GAE_VARIABLES }}
+      
+    - name: Publish app to Google App Engine
+      run: gcloud app deploy --project=${{ secrets.PROJECT_ID }}
