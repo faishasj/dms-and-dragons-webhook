@@ -27,4 +27,5 @@ jobs:
         echo ${{ secrets.GCLOUD_SA_KEY }} | base64 --decode --ignore-garbage > ./gcloud-api-key.json
         gcloud auth activate-service-account --key-file gcloud-api-key.json
         gcloud config set project ${{ secrets.PROJECT_ID }}
+        yarn install
         yarn deploy
