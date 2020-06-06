@@ -26,6 +26,7 @@ jobs:
     - name: Test printing
       run: |
         echo ${{ secrets.SERVICE_ACCOUNT_KEY }} | base64 --decode
+        export CLOUDSDK_PYTHON_SITEPACKAGES=1
       
     - name: Setup gcloud environment
       uses: GoogleCloudPlatform/github-actions@0.1.2
