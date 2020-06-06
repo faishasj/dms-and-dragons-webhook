@@ -19,20 +19,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    
-    - name: Test printing
-      run: |
-        echo ${{ secrets.SERVICE_ACCOUNT_KEY }} | base64 --decode
-        export CLOUDSDK_PYTHON_SITEPACKAGES=1
       
     - name: Setup gcloud environment
+      uses: actions/checkout@v2
       uses: GoogleCloudPlatform/github-actions@0.1.2
       with:
         # The service account key which will be used for authentication.
-        service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+        # service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
       
     - name: Publish app to Google App Engine
       run: gcloud app deploy --project=${{ secrets.PROJECT_ID }}
