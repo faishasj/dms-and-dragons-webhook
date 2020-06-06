@@ -2,9 +2,9 @@ import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { getGoogleServiceAccount } from './Utils';
 
 const serviceAccount = getGoogleServiceAccount();
-const client = new SecretManagerServiceClient({
+const client = new SecretManagerServiceClient(process.env.NODE_ENV === 'development' ? {
   credentials: serviceAccount,
-});
+} : undefined);
 
 
 /** App Secrets */
