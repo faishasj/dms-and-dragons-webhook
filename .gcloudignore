@@ -23,4 +23,3 @@ nodemon.json
 tsconfig.json
 .eslintrc.json
 README.md
-yarn.lock
