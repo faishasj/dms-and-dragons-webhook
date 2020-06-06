@@ -26,8 +26,6 @@ jobs:
     - name: Setup gcloud environment
       uses: GoogleCloudPlatform/github-actions@0.1.2
     
-    - run: echo ${{ secrets.GCLOUD_SA_KEY }} | base64 --decode --ignore-garbage
-      
     - name: Publish app to Google App Engine
       run: |
         echo ${{ secrets.GCLOUD_SA_KEY }} | base64 --decode --ignore-garbage > ./gcloud-api-key.json
