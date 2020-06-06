@@ -12,6 +12,7 @@
 # below:
 .git
 .gitignore
+.github/
 
 # Node.js dependencies:
 node_modules/
@@ -19,7 +20,11 @@ node_modules/
 # Development
 src/
 .env
+default.env
 nodemon.json
 tsconfig.json
 .eslintrc.json
 README.md
+
+# Deployment
+gcloud-api-key.json
