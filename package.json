@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gcp-build": "tsc"
+    "deploy": "tsc -p . && gcloud app deploy"
   },
   "author": "",
   "license": "ISC",
