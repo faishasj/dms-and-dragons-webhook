@@ -31,8 +31,6 @@ jobs:
     - name: Setup gcloud environment
       uses: GoogleCloudPlatform/github-actions@0.1.2
       with:
-        # The service account email which will be used for authentication.
-        service_account_email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
         # The service account key which will be used for authentication.
         service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
       
