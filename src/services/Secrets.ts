@@ -1,10 +1,10 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { getGoogleServiceAccount } from './Utils';
 
-const serviceAccount = getGoogleServiceAccount();
-const client = new SecretManagerServiceClient(process.env.NODE_ENV === 'development' ? {
+const serviceAccount = process.env.NODE_ENV === 'development' ? getGoogleServiceAccount() : undefined;
+const client = new SecretManagerServiceClient({
   credentials: serviceAccount,
-} : undefined);
+});
 
 
 /** App Secrets */
@@ -13,7 +13,9 @@ export type Secret =
   | 'PAGE_ACCESS_TOKEN';
 
 
-const secretName = (name: string): string => `projects/${serviceAccount.project_id}/secrets/${name}/versions/latest`;
+const secretName = (name: string): string => `projects/${process.env.NODE_ENV === 'development'
+  ? serviceAccount.project_id
+  : process.env.GOOGLE_CLOUD_PROJECT}/secrets/${name}/versions/latest`;
 
 export const getSecret = async (name: Secret): Promise<string> => {
   const [accessResponse] = await client.accessSecretVersion({ name: secretName(name) });
