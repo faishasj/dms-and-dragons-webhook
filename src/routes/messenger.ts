@@ -22,7 +22,7 @@ router.get('/webhook', asyncUtil(async (req, res) => {
 
   // Your verify token. Should be a random string.
   const VERIFY_TOKEN = await getSecret('VERIFY_TOKEN');
-    
+
   // Parse the query params
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
