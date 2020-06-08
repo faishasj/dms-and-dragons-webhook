@@ -35,8 +35,13 @@ router.post('/', asyncUtil(async (req, res) => {
 
   // Existing User
   if (payload === Payloads.NEW_CONVERSATION) introduction(user);
-  if (payload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY)
-    console.log('START STORY');
+  if (payload === Payloads.CREATE_STORY) { console.log('CREATE STORY'); messenger.toggleTyping(userId, false); }
+  if (payload === Payloads.VIEW_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
+  if (payload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
+    const storyId = payload.slice(Payloads.READ_NEW_STORY.length);
+    console.log('START STORY: ', storyId);
+    messenger.toggleTyping(userId, false);
+  }
 
   return res.status(200).send();
 }));
