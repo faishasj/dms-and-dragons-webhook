@@ -7,22 +7,23 @@ import Strings from '../Strings';
 // User Service
 
 
-export const newUser = async (userId: User['id']) => {
+export const newUser = async (userId: User['id']): Promise<User> => {
   const messenger = await getMessenger();
 
-  messenger.markSeen(userId);
-  messenger.toggleTyping(userId, true);
+  const { first_name } = await messenger.getUserProfile(userId, ['first_name']) as { first_name: string };
+  return createUser({ id: userId, name: first_name });
+};
 
-  const [{ first_name }] = await Promise.all([
-    messenger.getUserProfile(userId, ['first_name']) as Promise<{ first_name: string }>,
-    wait(2000),
-  ]);
-  createUser({ id: userId, name: first_name });
+export const introduction = async ({ id, name }: User) => {
+  const messenger = await getMessenger();
 
-  messenger.toggleTyping(userId, false);
-  await messenger.sendTextMessage(userId, Strings.greeting(first_name));
-  messenger.toggleTyping(userId, true);
+  messenger.markSeen(id);
+  messenger.toggleTyping(id, true);
+
+  messenger.toggleTyping(id, false);
+  await messenger.sendTextMessage(id, Strings.greeting(name));
+  messenger.toggleTyping(id, true);
   await wait(3000);
-  messenger.toggleTyping(userId, false);
-  await messenger.sendTextMessage(userId, Strings.intro);
+  messenger.toggleTyping(id, false);
+  await messenger.sendTextMessage(id, Strings.intro);
 };

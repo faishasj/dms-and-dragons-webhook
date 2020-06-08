@@ -2,9 +2,9 @@ import Router from 'express';
 import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../services/Secrets';
-import { getUser, createUser } from '../model';
+import { getUser } from '../model';
 import { Payloads } from '../Messenger';
-import { newUser } from '../services/User';
+import { newUser, introduction } from '../services/User';
 
 const router = Router();
 
@@ -21,19 +21,18 @@ router.post('/', asyncUtil(async (req, res) => {
   const { id: userId } = message.sender;
   const { payload } = message.postback || {};
   const { text } = message.message || {};
-  const user = await getUser(userId);
+  let user = await getUser(userId);
 
   if (!user) { // New User
-    if (payload === Payloads.NEW_CONVERSATION) {
-      await newUser(userId);
-      return res.status(200).send();
+    user = await newUser(userId);
+    if (payload !== Payloads.NEW_CONVERSATION) {
+      // No user and not start of conversation, should never happen
+      console.error(`User Missing\n${JSON.stringify(message)}`);
     }
-    // No user and not start of conversation, should never happen
-    console.error(`User Missing\n${message}`);
-    return res.status(500).send();
   }
 
   // Existing User
+  if (payload === Payloads.NEW_CONVERSATION) introduction(user);
 
   return res.status(200).send();
 }));
