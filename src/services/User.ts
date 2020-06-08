@@ -9,15 +9,17 @@ import Strings from '../Strings';
 
 export const newUser = async (userId: User['id']) => {
   const messenger = await getMessenger();
-  const { first_name } = await messenger.getUserProfile(userId, ['first_name']) as { first_name: string };
-  const user = await createUser({ id: userId, name: first_name });
 
   messenger.markSeen(userId);
-  await messenger.toggleTyping(userId, true);
-  wait();
-  await messenger.toggleTyping(userId, false);
-  await messenger.sendTextMessage(userId, Strings.greeting(user.name));
-  await messenger.toggleTyping(userId, true);
-  wait();
+  messenger.toggleTyping(userId, true);
+
+  const { first_name } = await messenger.getUserProfile(userId, ['first_name']) as { first_name: string };
+  createUser({ id: userId, name: first_name });
+
+  messenger.toggleTyping(userId, false);
+  await messenger.sendTextMessage(userId, Strings.greeting(first_name));
+  messenger.toggleTyping(userId, true);
+  await wait();
+  messenger.toggleTyping(userId, false);
   await messenger.sendTextMessage(userId, Strings.intro);
 };
