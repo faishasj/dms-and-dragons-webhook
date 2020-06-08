@@ -10,15 +10,14 @@ import Strings from '../Strings';
 export const newUser = async (userId: User['id']): Promise<User> => {
   const messenger = await getMessenger();
 
+  messenger.markSeen(userId);
+  messenger.toggleTyping(userId, true);
   const { first_name } = await messenger.getUserProfile(userId, ['first_name']) as { first_name: string };
   return createUser({ id: userId, name: first_name });
 };
 
 export const introduction = async ({ id, name }: User) => {
   const messenger = await getMessenger();
-
-  messenger.markSeen(id);
-  messenger.toggleTyping(id, true);
 
   messenger.toggleTyping(id, false);
   await messenger.sendTextMessage(id, Strings.greeting(name));
