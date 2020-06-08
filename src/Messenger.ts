@@ -12,6 +12,7 @@ export enum Payloads {
 export const getMessenger = async (): Promise<FacebookMessagingAPIClient> => {
   if (!messagingClient) {
     const token = await getSecret('PAGE_ACCESS_TOKEN');
+    console.log('INIT MESSENGER');
     messagingClient = new FacebookMessagingAPIClient(token);
   }
   return messagingClient;

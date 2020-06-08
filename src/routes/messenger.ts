@@ -3,7 +3,7 @@ import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../services/Secrets';
 import { getUser } from '../model';
-import { Payloads } from '../Messenger';
+import { Payloads, getMessenger } from '../Messenger';
 import { newUser, introduction } from '../services/User';
 
 const router = Router();
@@ -21,14 +21,16 @@ router.post('/', asyncUtil(async (req, res) => {
   const { id: userId } = message.sender;
   const { payload } = message.postback || {};
   const { text } = message.message || {};
+
+  const messenger = await getMessenger();
+  messenger.markSeen(userId);
+  messenger.toggleTyping(userId, true);
+
   let user = await getUser(userId);
 
   if (!user) { // New User
     user = await newUser(userId);
-    if (payload !== Payloads.NEW_CONVERSATION) {
-      // No user and not start of conversation, should never happen
-      console.error(`User Missing\n${JSON.stringify(message)}`);
-    }
+    if (payload !== Payloads.NEW_CONVERSATION) console.error(`User was Missing\n${JSON.stringify(message)}`);
   }
 
   // Existing User
