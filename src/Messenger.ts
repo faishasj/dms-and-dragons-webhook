@@ -1,20 +1,30 @@
-import { FacebookMessagingAPIClient } from 'fb-messenger-bot-api';
+import { FacebookMessagingAPIClient, FacebookProfileAPIClient } from 'fb-messenger-bot-api';
 import { getSecret } from './services/Secrets';
 
 let messagingClient: FacebookMessagingAPIClient;
+let profileClient: FacebookProfileAPIClient;
 
 // Custom Payloads
 export enum Payloads {
   NEW_CONVERSATION = 'GET_STARTED_PAYLOAD',
   READ_NEW_STORY = 'READ:', // append story id
+  CREATE_STORY = 'CREATE_STORY',
+  VIEW_STORIES = 'VIEW_STORIES',
 };
 
 
 export const getMessenger = async (): Promise<FacebookMessagingAPIClient> => {
   if (!messagingClient) {
     const token = await getSecret('PAGE_ACCESS_TOKEN');
-    console.log('INIT MESSENGER');
     messagingClient = new FacebookMessagingAPIClient(token);
   }
   return messagingClient;
 }
+
+export const getProfile = async (): Promise<FacebookProfileAPIClient> => {
+  if (!profileClient) {
+    const token = await getSecret('PAGE_ACCESS_TOKEN');
+    profileClient = new FacebookProfileAPIClient(token);
+  }
+  return profileClient;
+};
