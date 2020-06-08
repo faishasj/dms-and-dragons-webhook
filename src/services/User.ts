@@ -23,7 +23,8 @@ export const newUser = async (userId: User['id']): Promise<User> => {
 export const introduction = async ({ id, name }: User) => {
   const messenger = await getMessenger();
 
+  await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.greeting(name));
-  await waitTyping(id, 3000);
+  await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.intro);
 };
