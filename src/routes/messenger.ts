@@ -26,15 +26,16 @@ router.post('/', asyncUtil(async (req, res) => {
   if (!user) { // New User
     if (payload === Payloads.NEW_CONVERSATION) {
       await newUser(userId);
+      return res.status(200).send();
     }
     // No user and not start of conversation, should never happen
     console.error(`User Missing\n${message}`);
-    res.status(500).send();
+    return res.status(500).send();
   }
 
   // Existing User
 
-  res.status(200).send();
+  return res.status(200).send();
 }));
 
 
