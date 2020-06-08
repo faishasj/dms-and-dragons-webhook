@@ -1,6 +1,6 @@
 import { MESSAGE_TEMPLATE_TYPE } from 'fb-messenger-bot-api';
 import { User } from '../Types';
-import { getMessenger } from '../Messenger';
+import { getMessenger, Payloads } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
@@ -43,7 +43,7 @@ export const introduction = async ({ id, name }: User) => {
       title: story.metadata.title,
       image_url: story.metadata.coverPhoto,
       subtitle: story.metadata.description,
-      buttons: [{ type: 'postback', title: 'Read Now', payload: 'READ_NOW_TEST' }],
+      buttons: [{ type: 'postback', title: 'Read Now', payload: `${Payloads.READ_NEW_STORY}${story.id}` }],
     })),
   } as any);
 };

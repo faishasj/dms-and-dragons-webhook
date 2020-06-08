@@ -6,6 +6,7 @@ let messagingClient: FacebookMessagingAPIClient;
 // Custom Payloads
 export enum Payloads {
   NEW_CONVERSATION = 'GET_STARTED_PAYLOAD',
+  READ_NEW_STORY = 'READ:', // append story id
 };
 
 

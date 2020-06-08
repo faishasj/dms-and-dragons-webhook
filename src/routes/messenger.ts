@@ -35,6 +35,8 @@ router.post('/', asyncUtil(async (req, res) => {
 
   // Existing User
   if (payload === Payloads.NEW_CONVERSATION) introduction(user);
+  if (payload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY)
+    console.log('START STORY');
 
   return res.status(200).send();
 }));
