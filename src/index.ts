@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import MessengerRouter from './routes/messenger';
+import { MessengerRouter, TestingRouter } from './routes';
 
 
 const app = express();
@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 
 
 app.use(MessengerRouter);
+app.use(TestingRouter); // Always included because testing these bots is a nightmare that requires production release for everything
 
 
 
