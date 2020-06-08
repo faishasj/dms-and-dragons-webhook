@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { asyncUtil } from '../middleware/asyncUtil';
-import { getUser } from '../model';
+import { getUser, getStories } from '../model';
 
 
 const router = Router();
@@ -18,6 +18,11 @@ router.get('/getUser', asyncUtil(async (req: Request<{}, {}, {}, { userId: strin
   const user = await getUser(userId);
 
   res.status(200).send({ user });
+}));
+
+router.get('/getStories', asyncUtil(async (req, res) => {
+  const stories = await getStories();
+  res.status(200).send({ stories });
 }));
 
 
