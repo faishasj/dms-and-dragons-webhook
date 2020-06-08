@@ -11,8 +11,8 @@ app.use(bodyParser.json());
 
 
 
-app.use(MessengerRouter);
-app.use(TestingRouter); // Always included because testing these bots is a nightmare that requires production release for everything
+app.use('/webhook', MessengerRouter); // Messenger Bot Endpoints
+app.use('/testing', TestingRouter); // Always included because testing these bots is a nightmare that requires production release for everything
 
 
 
