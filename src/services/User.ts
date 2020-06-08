@@ -1,6 +1,7 @@
+import { MESSAGE_TEMPLATE_TYPE } from 'fb-messenger-bot-api';
 import { User } from '../Types';
 import { getMessenger } from '../Messenger';
-import { createUser } from '../model';
+import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
 
@@ -22,13 +23,27 @@ export const newUser = async (userId: User['id']): Promise<User> => {
 
 export const introduction = async ({ id, name }: User) => {
   const messenger = await getMessenger();
+  const storiesPromise = getStories(10);
 
-  await waitTyping(id, 2000);
+  await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.greeting(name));
-  await waitTyping(id, 2000);
+  await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro1);
-  await waitTyping(id, 2000);
+  await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro2);
-  await waitTyping(id, 2000);
+  await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro3);
+  await waitTyping(id, 3000);
+
+  const stories = await storiesPromise;
+  // https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic#carousel
+  messenger.sendTemplateMessage(id, {
+    template_type: MESSAGE_TEMPLATE_TYPE.GENERIC,
+    elements: stories.map(story => ({
+      title: story.metadata.title,
+      image_url: story.metadata.coverPhoto,
+      subtitle: story.metadata.description,
+      buttons: [{ type: 'postback', title: 'Read Now', payload: 'READ_NOW_TEST' }],
+    })),
+  } as any);
 };
