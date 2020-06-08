@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import { getGoogleServiceAccount } from '../services/Utils';
+import { getGoogleServiceAccount } from '../Utils';
 
 // Firestore Data Layer API (Not actually a model)
 
