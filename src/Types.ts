@@ -14,7 +14,7 @@ export interface User {
   id: string;
   name: string;
   activeStory: StoryView['id'];
-};
+}
 
 export interface Story {
   id: string;
@@ -40,4 +40,17 @@ export interface StoryView {
   }[];
   startTime: DateTime;
   endTime: DateTime | null;
-};
+}
+
+export interface Step {
+  id: string;
+  stepCount: number;
+  options: {
+    stepId: Step['id'];
+    requiredText: string;
+  }[];
+  messages: {
+    text: string;
+    typingTime: number;
+  }[];
+}
