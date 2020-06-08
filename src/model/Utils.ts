@@ -10,6 +10,7 @@ export enum Collection {
 };
 export enum SubCollection {
   StoryViews = 'library',
+  Steps = 'steps',
 };
 
 

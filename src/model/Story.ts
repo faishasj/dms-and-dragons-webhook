@@ -1,5 +1,5 @@
-import { Story, User, Uri } from '../Types';
-import { collection, Collection } from './Utils';
+import { Story, User, Uri, Step } from '../Types';
+import { collection, Collection, SubCollection } from './Utils';
 
 // Story Data
 
@@ -31,6 +31,30 @@ export const getStory = async (storyId: Story['id']): Promise<Story | null> => {
   } as Story;
 
   return story;
+};
+/** Get Stories */
+export const getStories = async (count?: number): Promise<Story[]> => {
+  let query = collection(Collection.Stories).where('published', '==', true);
+  if (count !== undefined) query = query.limit(count);
+  const { docs } = await query.get();
+
+  const stories = docs.map(doc => ({
+    ...doc.data(),
+    id: doc.id,
+  }) as Story);
+  
+  return stories;
+};
+/** Get Story Steps */
+export const getStorySteps = async (storyId: Story['id']): Promise<Step[]> => {
+  const { docs } = await collection(Collection.Stories).doc(storyId)
+    .collection(SubCollection.Steps).get();
+  
+  const steps = docs.map(doc => ({
+    ...doc.data(),
+    id: doc.id,
+  }) as Step);
+  return steps;
 };
 /** Create Story */
 export const createStory = async (data: CreateStorySchema): Promise<Story> => {

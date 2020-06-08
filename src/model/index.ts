@@ -26,4 +26,6 @@ export {
 
   createStory,
   getStory,
+  getStories,
+  getStorySteps,
 } from './Story';
