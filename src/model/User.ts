@@ -26,7 +26,7 @@ export const getUser = async (userId: User['id']): Promise<User | null> => {
 };
 /** Create User */
 export const createUser = async ({ id, ...data }: CreateUserSchema): Promise<User> => {
-  const ref = await collection(Collection.Users).doc(id).set(data);
+  await collection(Collection.Users).doc(id).set(data);
 
   const user = {
     ...data,
