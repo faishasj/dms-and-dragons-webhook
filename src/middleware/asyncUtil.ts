@@ -14,9 +14,7 @@ export function asyncUtil<
   ReqBody = any,
 >(handler: RequestHandler<P, ResBody, ReqBody>) {
   return (req: Request<P, ResBody, ReqBody>, res: Response<ResBody>, next: NextFn) => {
-    try {
-      return Promise.resolve(handler(req, res, next));
-    } catch (e) { return next(e); }
+    return handler(req, res, next).catch((e: Error) => { return next(e); });
   };
 }
 
@@ -26,9 +24,7 @@ export function asyncErrorUtil<
   ReqBody = any,
 >(handler: ErrorRequestHandler<P, ResBody, ReqBody>) {
   return (error: any, req: Request<P, ResBody, ReqBody>, res: Response<ResBody>, next: NextFn) => {
-    try {
-      return Promise.resolve(handler(error, req, res, next));
-    } catch (e) { return next(e); }
+    return handler(error, req, res, next).catch((e: Error) => { console.warn(e); return next(e); });
   };
 }
 
