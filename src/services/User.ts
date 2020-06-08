@@ -13,13 +13,16 @@ export const newUser = async (userId: User['id']) => {
   messenger.markSeen(userId);
   messenger.toggleTyping(userId, true);
 
-  const { first_name } = await messenger.getUserProfile(userId, ['first_name']) as { first_name: string };
+  const [{ first_name }] = await Promise.all([
+    messenger.getUserProfile(userId, ['first_name']) as Promise<{ first_name: string }>,
+    wait(2000),
+  ]);
   createUser({ id: userId, name: first_name });
 
   messenger.toggleTyping(userId, false);
   await messenger.sendTextMessage(userId, Strings.greeting(first_name));
   messenger.toggleTyping(userId, true);
-  await wait();
+  await wait(3000);
   messenger.toggleTyping(userId, false);
   await messenger.sendTextMessage(userId, Strings.intro);
 };
