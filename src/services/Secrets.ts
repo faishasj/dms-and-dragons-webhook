@@ -13,7 +13,7 @@ export type Secret =
   | 'PAGE_ACCESS_TOKEN';
 
 
-const secretName = (name: string): string => `projects/${process.env.NODE_ENV === 'development'
+const secretName = (name: string): string => `projects/${process.env.NODE_ENV !== 'production'
   ? serviceAccount.project_id
   : process.env.GOOGLE_CLOUD_PROJECT}/secrets/${name}/versions/latest`;
 
