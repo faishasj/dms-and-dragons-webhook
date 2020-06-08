@@ -1,7 +1,7 @@
 
 // Services Utilities
 
-if (process.env.NODE_ENV === 'development' && !process.env.GOOGLE_SERVICE_ACCOUNT)
+if (process.env.NODE_ENV !== 'production' && !process.env.GOOGLE_SERVICE_ACCOUNT)
   throw new Error('Missing Google Service Account Environment Variable');
 
 
