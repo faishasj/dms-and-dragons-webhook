@@ -13,8 +13,9 @@ export interface CreateStoryViewSchema { storyId: Story['id']; }
 // Functions
 
 /** Get User */
-export const getUser = async (userId: User['id']): Promise<User> => {
+export const getUser = async (userId: User['id']): Promise<User | null> => {
   const doc = await collection(Collection.Users).doc(userId).get();
+  if (!doc.exists) return null;
 
   const user = {
     ...doc.data(),
@@ -36,9 +37,10 @@ export const createUser = async (data: CreateUserSchema): Promise<User> => {
 };
 
 /** Get a User's Story View */
-export const getStoryView = async (userId: User['id'], storyViewId: StoryView['id']): Promise<StoryView> => {
+export const getStoryView = async (userId: User['id'], storyViewId: StoryView['id']): Promise<StoryView | null> => {
   const doc = await collection(Collection.Users).doc(userId)
     .collection(SubCollection.StoryViews).doc(storyViewId).get();
+  if (!doc.exists) return null;
 
   const storyView = {
     ...doc.data(),

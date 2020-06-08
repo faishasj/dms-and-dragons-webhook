@@ -21,8 +21,9 @@ export interface CreateStorySchema {
 // Functions
 
 /** Get Story */
-export const getStory = async (storyId: Story['id']): Promise<Story> => {
+export const getStory = async (storyId: Story['id']): Promise<Story | null> => {
   const doc = await collection(Collection.Stories).doc(storyId).get();
+  if (!doc.exists) return null;
 
   const story = {
     ...doc.data(),
