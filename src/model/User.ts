@@ -6,7 +6,7 @@ import { collection, Collection, SubCollection, newTimestamp } from './Utils';
 
 // Schemas
 
-export interface CreateUserSchema { name: string; }
+export interface CreateUserSchema { id: string; name: string; }
 export interface CreateStoryViewSchema { storyId: Story['id']; }
 
 
@@ -25,12 +25,12 @@ export const getUser = async (userId: User['id']): Promise<User | null> => {
   return user;
 };
 /** Create User */
-export const createUser = async (data: CreateUserSchema): Promise<User> => {
-  const ref = await collection(Collection.Users).add(data);
+export const createUser = async ({ id, ...data }: CreateUserSchema): Promise<User> => {
+  const ref = await collection(Collection.Users).doc(id).set(data);
 
   const user = {
     ...data,
-    id: ref.id,
+    id,
   } as User;
 
   return user;
