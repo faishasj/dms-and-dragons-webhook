@@ -5,14 +5,18 @@ import { getUser } from '../model';
 
 const router = Router();
 
-router.use((req, res) => {
-  if (process.env.NODE_ENV !== 'development') res.status(418).send();
+router.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production') res.status(418).send();
+  next();
 });
 
 
-router.get('/getUser', asyncUtil(async (req: Request<{ userId: string }>, res: Response) => {
-  const { userId } = req.params;
+router.get('/getUser', asyncUtil(async (req: Request<{}, {}, {}, { userId: string }>, res: Response) => {
+  const { userId } = req.query;
+  if (!userId) res.status(400).send();
+
   const user = await getUser(userId);
+
   res.status(200).send({ user });
 }));
 
