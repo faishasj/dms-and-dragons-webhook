@@ -26,5 +26,9 @@ export const introduction = async ({ id, name }: User) => {
   await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.greeting(name));
   await waitTyping(id, 2000);
-  await messenger.sendTextMessage(id, Strings.intro);
+  await messenger.sendTextMessage(id, Strings.intro1);
+  await waitTyping(id, 2000);
+  await messenger.sendTextMessage(id, Strings.intro2);
+  await waitTyping(id, 2000);
+  await messenger.sendTextMessage(id, Strings.intro3);
 };
