@@ -13,12 +13,18 @@ const rl = readline.createInterface({
 const run = async () => {
   const profile = await getProfile();
 
-  await profile.setGreetingMessage(Strings.profileGreetingMessage);
-  await profile.setGetStartedAction(Payloads.NEW_CONVERSATION);
-  await profile.setPersistentMenu([
-    { type: 'url', title: Strings.createStory, url: CREATE_STORY_URL },
-    { type: 'url', title: Strings.browseStories, url: BROWSE_STORIES_URL },
-  ] as any); // These types are really bad
+  console.log(await profile.setGreetingMessage(Strings.profileGreetingMessage));
+  console.log(await profile.setGetStartedAction(Payloads.NEW_CONVERSATION));
+  const persistMenuOptions = {
+    messenger_extensions: true,
+    webview_height_ratio: "full",
+    webview_share_button: "hide",
+    type: 'web_url',
+  }
+  console.log(await profile.setPersistentMenu([
+    { ...persistMenuOptions, title: Strings.createStory, url: CREATE_STORY_URL },
+    { ...persistMenuOptions, title: Strings.browseStories, url: BROWSE_STORIES_URL },
+  ] as any)); // These types are really bad
 };
 
 
