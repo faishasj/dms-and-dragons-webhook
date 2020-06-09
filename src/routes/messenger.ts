@@ -1,5 +1,5 @@
 import Router from 'express';
-import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
+import { FacebookMessageParser, ValidateWebhook, BUTTON_TYPE, IURLButton } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../services/Secrets';
 import { getUser } from '../model';
@@ -35,7 +35,21 @@ router.post('/', asyncUtil(async (req, res) => {
 
   // Existing User
   if (payload === Payloads.NEW_CONVERSATION) introduction(user);
-  if (payload === Payloads.CREATE_STORY) { console.log('CREATE STORY'); messenger.toggleTyping(userId, false); }
+
+  if (payload === Payloads.CREATE_STORY) { 
+    console.log('CREATE STORY'); 
+    const libraryButton: IURLButton = {
+      type: BUTTON_TYPE.URL,
+      url: "https://dms-and-dragons.firebaseapp.com/my-stories",
+      title: "📚 Open Library",
+      messenger_extensions: true,
+      webview_height_ratio: "full",
+      webview_share_button: "hide"
+    }
+    messenger.sendButtonsMessage(userId, "", [libraryButton]);
+    messenger.toggleTyping(userId, false); 
+  }
+
   if (payload === Payloads.BROWSE_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
   if (payload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
     const storyId = payload.slice(Payloads.READ_NEW_STORY.length);

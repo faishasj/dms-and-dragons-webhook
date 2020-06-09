@@ -25,19 +25,18 @@ export const introduction = async ({ id, name }: User) => {
   const messenger = await getMessenger();
   const storiesPromise = getStories(10);
 
-  await waitTyping(id, 3000);
+  await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.greeting(name));
-  await wait(3000);
+  await wait(2000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro1);
   await wait(4000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro2);
-  await wait(5000);
+  await wait(4000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro3);
-  await wait(3000);
-  await waitTyping(id, 3000);
+  await wait(2000);
 
   const stories = await storiesPromise;
   // https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic#carousel
@@ -51,7 +50,7 @@ export const introduction = async ({ id, name }: User) => {
     })),
   } as any);
 
-  await wait(4000);
+  await wait(2000);
   await waitTyping(id, 3000);
 
   await messenger.sendQuickReplyMessage(id, Strings.actionPrompt, [
