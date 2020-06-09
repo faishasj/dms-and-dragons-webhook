@@ -1,6 +1,7 @@
 import readline from 'readline';
 import { getProfile, Payloads } from '../Messenger';
 import Strings from '../Strings';
+import { CREATE_STORY_URL, BROWSE_STORIES_URL } from '../Constants';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -12,10 +13,11 @@ const rl = readline.createInterface({
 const run = async () => {
   const profile = await getProfile();
 
+  await profile.setGreetingMessage(Strings.profileGreetingMessage);
   await profile.setGetStartedAction(Payloads.NEW_CONVERSATION);
   await profile.setPersistentMenu([
-    { type: 'postback', title: Strings.createStory, payload: Payloads.CREATE_STORY },
-    { type: 'postback', title: Strings.browseStories, payload: Payloads.BROWSE_STORIES },
+    { type: 'url', title: Strings.createStory, url: CREATE_STORY_URL },
+    { type: 'url', title: Strings.browseStories, url: BROWSE_STORIES_URL },
   ] as any); // These types are really bad
 };
 
