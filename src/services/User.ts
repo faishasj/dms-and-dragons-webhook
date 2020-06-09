@@ -1,4 +1,4 @@
-import { MESSAGE_TEMPLATE_TYPE } from 'fb-messenger-bot-api';
+import { MESSAGE_TEMPLATE_TYPE, QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
 import { User } from '../Types';
 import { getMessenger, Payloads } from '../Messenger';
 import { createUser, getStories } from '../model';
@@ -36,7 +36,7 @@ export const introduction = async ({ id, name }: User) => {
   await wait(6000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro3);
-  await wait(6000);
+  await wait(3000);
   await waitTyping(id, 3000);
 
   const stories = await storiesPromise;
@@ -50,4 +50,20 @@ export const introduction = async ({ id, name }: User) => {
       buttons: [{ type: 'postback', title: 'Read Now', payload: `${Payloads.READ_NEW_STORY}${story.id}` }],
     })),
   } as any);
+
+  await wait(6000);
+  await waitTyping(id, 3000);
+
+  await messenger.sendQuickReplyMessage(id, Strings.actionPrompt, [
+    {
+      content_type: QUICK_REPLY_TYPE.TEXT,
+      title: Strings.createStory,
+      payload: Payloads.CREATE_STORY,
+    },
+    {
+      content_type: QUICK_REPLY_TYPE.TEXT,
+      title: Strings.browseStories,
+      payload: Payloads.BROWSE_STORIES,
+    }
+  ])
 };
