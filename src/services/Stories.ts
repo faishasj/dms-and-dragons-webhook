@@ -1,6 +1,5 @@
-import { IURLButton, BUTTON_TYPE } from 'fb-messenger-bot-api';
 import { getMessenger } from '../Messenger';
-import { CREATE_STORY_URL } from '../Constants';
+import { CREATE_STORY_URL, URL_BUTTON } from '../Constants';
 import { User } from '../Types';
 import Strings from '../Strings';
 
@@ -9,14 +8,7 @@ import Strings from '../Strings';
 export const directToLibrary = async ({ id }: User) => {
   const messenger = await getMessenger();
 
-  const libraryButton: IURLButton = {
-    type: BUTTON_TYPE.URL,
-    url: CREATE_STORY_URL,
-    title: Strings.openLibrary,
-    messenger_extensions: true,
-    webview_height_ratio: "full",
-    webview_share_button: "hide"
-  };
-  messenger.sendButtonsMessage(id, "Click here to view library", [libraryButton]);
+  const libraryButton = { ...URL_BUTTON, url: CREATE_STORY_URL, title: Strings.openLibrary };
+  messenger.sendButtonsMessage(id, "Click here to view library", [libraryButton as any]);
   messenger.toggleTyping(id, false);
 };

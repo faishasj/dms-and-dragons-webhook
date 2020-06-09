@@ -1,7 +1,7 @@
 import readline from 'readline';
 import { getProfile, Payloads } from '../Messenger';
 import Strings from '../Strings';
-import { CREATE_STORY_URL, BROWSE_STORIES_URL } from '../Constants';
+import { CREATE_STORY_URL, BROWSE_STORIES_URL, URL_BUTTON } from '../Constants';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -15,15 +15,9 @@ const run = async () => {
 
   console.log(await profile.setGreetingMessage(Strings.profileGreetingMessage));
   console.log(await profile.setGetStartedAction(Payloads.NEW_CONVERSATION));
-  const persistMenuOptions = {
-    messenger_extensions: true,
-    webview_height_ratio: "full",
-    webview_share_button: "hide",
-    type: 'web_url',
-  }
   console.log(await profile.setPersistentMenu([
-    { ...persistMenuOptions, title: Strings.createStory, url: CREATE_STORY_URL },
-    { ...persistMenuOptions, title: Strings.browseStories, url: BROWSE_STORIES_URL },
+    { ...URL_BUTTON, title: Strings.createStory, url: CREATE_STORY_URL },
+    { ...URL_BUTTON, title: Strings.browseStories, url: BROWSE_STORIES_URL },
   ] as any)); // These types are really bad
 };
 
