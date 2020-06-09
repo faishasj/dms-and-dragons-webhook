@@ -1,5 +1,6 @@
 import readline from 'readline';
 import { getProfile, Payloads } from '../Messenger';
+import Strings from '../Strings';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -13,8 +14,8 @@ const run = async () => {
 
   await profile.setGetStartedAction(Payloads.NEW_CONVERSATION);
   await profile.setPersistentMenu([
-    { type: 'postback', title: 'Create Story', payload: Payloads.CREATE_STORY },
-    { type: 'postback', title: 'View Stories', payload: Payloads.VIEW_STORIES },
+    { type: 'postback', title: Strings.createStory, payload: Payloads.CREATE_STORY },
+    { type: 'postback', title: Strings.browseStories, payload: Payloads.BROWSE_STORIES },
   ] as any); // These types are really bad
 };
 
