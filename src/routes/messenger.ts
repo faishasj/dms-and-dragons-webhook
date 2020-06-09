@@ -17,8 +17,6 @@ router.post('/', asyncUtil(async (req, res) => {
 
   const parsed = FacebookMessageParser.parsePayload(body);
   const message = parsed[0];
-  console.log(parsed.length, ' Messages'); // Want to confirm that this is always 1
-  console.log('INCOMING: ', JSON.stringify(parsed.length > 1 ? parsed : message));
 
   const { id: userId } = message.sender;
   const { payload: postBackPayload } = message.postback || {};
@@ -37,7 +35,7 @@ router.post('/', asyncUtil(async (req, res) => {
   }
 
   // Existing User
-  
+
   if (postBackPayload === Payloads.NEW_CONVERSATION) introduction(user);
   if (postBackPayload === Payloads.BROWSE_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
   if (postBackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
