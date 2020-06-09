@@ -1,12 +1,11 @@
 import Router from 'express';
-import { FacebookMessageParser, ValidateWebhook, BUTTON_TYPE, IURLButton } from 'fb-messenger-bot-api';
+import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../services/Secrets';
 import { newUser, introduction } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
-import { CREATE_STORY_URL } from '../Constants';
-import { directToLibrary } from '../services/Stories';
+import { directToLibrary, directToMyStories } from '../services/Stories';
 
 const router = Router();
 
@@ -37,14 +36,14 @@ router.post('/', asyncUtil(async (req, res) => {
   // Existing User
 
   if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
-  if (postbackPayload === Payloads.BROWSE_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
+  if (postbackPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
   if (postbackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
     const storyId = postbackPayload.slice(Payloads.READ_NEW_STORY.length);
     console.log('START STORY: ', storyId);
     messenger.toggleTyping(userId, false);
   }
 
-  if (quickReplyPayload === Payloads.CREATE_STORY) directToLibrary(user);
+  if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
 
 
   return res.status(200).send();

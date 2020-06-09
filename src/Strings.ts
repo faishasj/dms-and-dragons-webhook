@@ -7,7 +7,11 @@ export default {
   intro3: 'Or maybe, just grab a cup ☕ and wind down with a story from our user-submitted library:',
 
   actionPrompt: 'So, what are you feeling today?',
+
   createStory: '✍️ Create Story',
+  openMyStories: '✍️ Open My Stories',
+  openMyStoriesPrompt: 'Click here to view your stories',
+
   browseStories: '📚 Browse Stories',
   openLibrary: '📚 Open Library',
   openLibraryPrompt: 'Click here to view library',
