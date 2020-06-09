@@ -9,7 +9,7 @@ export enum Payloads {
   NEW_CONVERSATION = 'GET_STARTED_PAYLOAD',
   READ_NEW_STORY = 'READ:', // append story id
   CREATE_STORY = 'CREATE_STORY',
-  VIEW_STORIES = 'VIEW_STORIES',
+  BROWSE_STORIES = 'BROWSE_STORIES',
 };
 
 
