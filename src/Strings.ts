@@ -6,8 +6,9 @@ export default {
   intro2: 'Will it be a nail-biting creepypasta horror story 👻, or a modern romance a la Romeo and Juliet... if they had Facebook accounts 😍?',
   intro3: 'Or maybe, just grab a cup ☕ and wind down with a story from our user-submitted library:',
 
+  actionPrompt: 'So, what are you feeling today?',
   createStory: '✍️ Create Story',
   browseStories: '📚 Browse Stories',
   openLibrary: '📚 Open Library',
-  actionPrompt: 'So, what are you feeling today?',
+  openLibraryPrompt: 'Click here to view library',
 };
