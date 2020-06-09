@@ -64,5 +64,5 @@ export const introduction = async ({ id, name }: User) => {
       title: Strings.browseStories,
       payload: Payloads.BROWSE_STORIES,
     }
-  ])
+  ]);
 };
