@@ -2,9 +2,10 @@ import Router from 'express';
 import { FacebookMessageParser, ValidateWebhook, BUTTON_TYPE, IURLButton } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../services/Secrets';
-import { getUser } from '../model';
-import { Payloads, getMessenger } from '../Messenger';
 import { newUser, introduction } from '../services/User';
+import { Payloads, getMessenger } from '../Messenger';
+import { getUser } from '../model';
+import { CREATE_STORY_URL } from '../Constants';
 
 const router = Router();
 
@@ -46,12 +47,12 @@ router.post('/', asyncUtil(async (req, res) => {
   if (quickReplyPayload === Payloads.CREATE_STORY) {
     const libraryButton: IURLButton = {
       type: BUTTON_TYPE.URL,
-      url: "https://dms-and-dragons.firebaseapp.com/my-stories",
+      url: CREATE_STORY_URL,
       title: "📚 Open Library",
       messenger_extensions: true,
       webview_height_ratio: "full",
       webview_share_button: "hide"
-    }
+    };
     messenger.sendButtonsMessage(userId, "", [libraryButton]);
     messenger.toggleTyping(userId, false);
   }
