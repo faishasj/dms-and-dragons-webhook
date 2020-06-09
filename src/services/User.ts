@@ -27,12 +27,16 @@ export const introduction = async ({ id, name }: User) => {
 
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.greeting(name));
+  await wait(4000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro1);
+  await wait(6000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro2);
+  await wait(6000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro3);
+  await wait(6000);
   await waitTyping(id, 3000);
 
   const stories = await storiesPromise;
