@@ -8,6 +8,6 @@ export default {
 
   createStory: '✍️ Create Story',
   browseStories: '📚 Browse Stories',
-
-  actionPrompt: 'So, what are you feeling today?'
+  openLibrary: '📚 Open Library',
+  actionPrompt: 'So, what are you feeling today?',
 };

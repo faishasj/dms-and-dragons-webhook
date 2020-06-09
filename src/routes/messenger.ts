@@ -6,6 +6,7 @@ import { newUser, introduction } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
 import { CREATE_STORY_URL } from '../Constants';
+import { directToLibrary } from '../services/Stories';
 
 const router = Router();
 
@@ -36,6 +37,7 @@ router.post('/', asyncUtil(async (req, res) => {
   }
 
   // Existing User
+  
   if (postBackPayload === Payloads.NEW_CONVERSATION) introduction(user);
   if (postBackPayload === Payloads.BROWSE_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
   if (postBackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
@@ -44,18 +46,7 @@ router.post('/', asyncUtil(async (req, res) => {
     messenger.toggleTyping(userId, false);
   }
 
-  if (quickReplyPayload === Payloads.CREATE_STORY) {
-    const libraryButton: IURLButton = {
-      type: BUTTON_TYPE.URL,
-      url: CREATE_STORY_URL,
-      title: "📚 Open Library",
-      messenger_extensions: true,
-      webview_height_ratio: "full",
-      webview_share_button: "hide"
-    };
-    messenger.sendButtonsMessage(userId, "", [libraryButton]);
-    messenger.toggleTyping(userId, false);
-  }
+  if (quickReplyPayload === Payloads.CREATE_STORY) directToLibrary(user);
 
 
   return res.status(200).send();
