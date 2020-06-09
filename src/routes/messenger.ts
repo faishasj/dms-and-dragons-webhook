@@ -19,7 +19,7 @@ router.post('/', asyncUtil(async (req, res) => {
   const message = parsed[0];
 
   const { id: userId } = message.sender;
-  const { payload: postBackPayload } = message.postback || {};
+  const { payload: postbackPayload } = message.postback || {};
   const { payload: quickReplyPayload } =  message.message?.quick_reply || {};
   const { text } = message.message || {};
 
@@ -31,15 +31,15 @@ router.post('/', asyncUtil(async (req, res) => {
 
   if (!user) { // New User
     user = await newUser(userId);
-    if (postBackPayload !== Payloads.NEW_CONVERSATION) console.error(`User was Missing\n${JSON.stringify(message)}`);
+    if (postbackPayload !== Payloads.NEW_CONVERSATION) console.error(`User was Missing\n${JSON.stringify(message)}`);
   }
 
   // Existing User
 
-  if (postBackPayload === Payloads.NEW_CONVERSATION) introduction(user);
-  if (postBackPayload === Payloads.BROWSE_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
-  if (postBackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
-    const storyId = postBackPayload.slice(Payloads.READ_NEW_STORY.length);
+  if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
+  if (postbackPayload === Payloads.BROWSE_STORIES) { console.log('VIEW STORIES'); messenger.toggleTyping(userId, false); }
+  if (postbackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
+    const storyId = postbackPayload.slice(Payloads.READ_NEW_STORY.length);
     console.log('START STORY: ', storyId);
     messenger.toggleTyping(userId, false);
   }
