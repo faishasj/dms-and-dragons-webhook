@@ -40,7 +40,7 @@ export const introduction = async ({ id, name }: User) => {
 
   const stories = await storiesPromise;
   // https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic#carousel
-  messenger.sendTemplateMessage(id, {
+  await messenger.sendTemplateMessage(id, {
     template_type: MESSAGE_TEMPLATE_TYPE.GENERIC,
     elements: stories.map(story => ({
       title: story.metadata.title,
