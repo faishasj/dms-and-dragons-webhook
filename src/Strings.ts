@@ -1,5 +1,5 @@
 export default {
-  profileGreetingMessage: 'An interactive Messenger experience based on storytelling in the age of "sliding into the DMs".',
+  profileGreetingMessage: 'Greetings, {{user_first_name}}, to DMs and Dragons 🐉. Are you ready to enter the fictional world inside your screen?',
 
   greeting: (name: string) => `Greetings, ${name}, to DMs and Dragons 🐉! Thanks for sliding into our DMs 😉`,
   intro1: 'Get your creative juices flowing and create your own interactive story told through Messenger to share with your friends, or the world!',
@@ -8,11 +8,10 @@ export default {
 
   actionPrompt: 'So, what are you feeling today?',
 
-  createStory: '✍️ Create Story',
-  openMyStories: '✍️ Open My Stories',
-  openMyStoriesPrompt: 'Click here to view your stories',
-
   browseStories: '📚 Browse Stories',
   openLibrary: '📚 Open Library',
-  openLibraryPrompt: 'Click here to view library',
+  openLibraryPrompt: 'Click below to explore the DMs and Dragons Library. 🤓',
+
+  openMyStories: '✍️ Create Story',
+  openMyStoriesPrompt: 'Click below to open the DM Creator and get writing! 🤔',
 };
