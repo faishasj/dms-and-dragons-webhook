@@ -11,6 +11,10 @@ export const URL_BUTTON: Partial<IURLButton> = {
 
 
 // URLs
+export const CREATE_STORY_URL = process.env.NODE_ENV !== 'production' && process.env.DEV_WEBVIEW_URL 
+  ? process.env.DEV_WEBVIEW_URL + 'my-stories'
+  : 'https://dms-and-dragons.firebaseapp.com/my-stories';
 
-export const CREATE_STORY_URL = 'https://dms-and-dragons.firebaseapp.com/my-stories';
-export const BROWSE_STORIES_URL = 'https://dms-and-dragons.firebaseapp.com/library';
+export const BROWSE_STORIES_URL = process.env.NODE_ENV !== 'production' && process.env.DEV_WEBVIEW_URL 
+  ? process.env.DEV_WEBVIEW_URL + 'library'
+  : 'https://dms-and-dragons.firebaseapp.com/library';
