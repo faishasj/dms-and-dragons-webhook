@@ -1,4 +1,6 @@
+import axios from 'axios';
 import readline from 'readline';
+import { getSecret } from '../services/Secrets';
 import { getProfile, Payloads } from '../Messenger';
 import Strings from '../Strings';
 import { CREATE_STORY_URL, BROWSE_STORIES_URL, URL_BUTTON } from '../Constants';
@@ -9,18 +11,33 @@ const rl = readline.createInterface({
 });
 
 
-
 const run = async () => {
   const profile = await getProfile();
+  const accessToken = await getSecret('PAGE_ACCESS_TOKEN');
+
+  console.log(await axios.post('https://graph.facebook.com/v7.0/me/messenger_profile', 
+    {
+      "whitelisted_domains":[
+        "https://dms-and-dragons.firebaseapp.com/",
+        "https://dms-and-dragons.firebaseio.com/",
+        "https://dms-and-dragons.appspot.com/",
+        process.env.DEV_WEBVIEW_URL
+      ].filter(a => a)
+    },
+    {
+      params: {
+        access_token: accessToken
+      }
+    }
+  ));
 
   console.log(await profile.setGreetingMessage(Strings.profileGreetingMessage));
   console.log(await profile.setGetStartedAction(Payloads.NEW_CONVERSATION));
   console.log(await profile.setPersistentMenu([
-    { ...URL_BUTTON, title: Strings.createStory, url: CREATE_STORY_URL },
+    { ...URL_BUTTON, title: Strings.openMyStories, url: CREATE_STORY_URL },
     { ...URL_BUTTON, title: Strings.browseStories, url: BROWSE_STORIES_URL },
   ] as any)); // These types are really bad
 };
-
 
 
 /** Main */
