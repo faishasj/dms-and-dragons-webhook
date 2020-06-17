@@ -36,15 +36,16 @@ router.post('/', asyncUtil(async (req, res) => {
   // Existing User
 
   if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
-  if (postbackPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
+
   if (postbackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
     const storyId = postbackPayload.slice(Payloads.READ_NEW_STORY.length);
     console.log('START STORY: ', storyId);
     messenger.toggleTyping(userId, false);
   }
 
-  if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
+  if (quickReplyPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
 
+  if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
 
   return res.status(200).send();
 }));
