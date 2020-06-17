@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import { MessengerRouter, TestingRouter } from './routes';
+import { MessengerRouter, TestingRouter, WebviewRouter } from './routes';
 
 
 const app = express();
@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 
 app.use('/webhook', MessengerRouter); // Messenger Bot Endpoints
 app.use('/testing', TestingRouter); // Always included because testing these bots is a nightmare that requires production release for everything
+app.use('/webview', WebviewRouter);
 
 
 

@@ -2,7 +2,7 @@ import Router from 'express';
 import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../Secrets';
-import { newUser, introduction } from '../services/User';
+import { newUser, introduction, readNewStory } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
 import { directToLibrary, directToMyStories } from '../services/Stories';
@@ -39,7 +39,7 @@ router.post('/', asyncUtil(async (req, res) => {
 
   if (postbackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
     const storyId = postbackPayload.slice(Payloads.READ_NEW_STORY.length);
-    console.log('START STORY: ', storyId);
+    await readNewStory(userId, storyId);
     messenger.toggleTyping(userId, false);
   }
 

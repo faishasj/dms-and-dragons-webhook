@@ -1,5 +1,5 @@
 import { MESSAGE_TEMPLATE_TYPE, QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
-import { User } from '../Types';
+import { User, Story } from '../Types';
 import { getMessenger, Payloads } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
@@ -65,4 +65,11 @@ export const introduction = async ({ id, name }: User) => {
       payload: Payloads.BROWSE_STORIES,
     }
   ]);
+};
+
+export const readNewStory = async (userId: User['id'], storyId: Story['id']): Promise<void> => {
+  const messenger = await getMessenger();
+
+  await waitTyping(userId, 2000);
+  await messenger.sendTextMessage(userId, `READ STORY: ${storyId}`);
 };
