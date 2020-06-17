@@ -36,7 +36,7 @@ export const introduction = async ({ id, name }: User) => {
   await wait(4000);
   await waitTyping(id, 3000);
   await messenger.sendTextMessage(id, Strings.intro3);
-  await wait(2000);
+  await wait(1000);
 
   const stories = await storiesPromise;
   // https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic#carousel
@@ -56,7 +56,7 @@ export const introduction = async ({ id, name }: User) => {
   await messenger.sendQuickReplyMessage(id, Strings.actionPrompt, [
     {
       content_type: QUICK_REPLY_TYPE.TEXT,
-      title: Strings.createStory,
+      title: Strings.openMyStories,
       payload: Payloads.CREATE_STORY,
     },
     {
