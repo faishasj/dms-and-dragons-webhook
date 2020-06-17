@@ -1,5 +1,5 @@
 import { FacebookMessagingAPIClient, FacebookProfileAPIClient } from 'fb-messenger-bot-api';
-import { getSecret } from './services/Secrets';
+import { getSecret } from './Secrets';
 
 let messagingClient: FacebookMessagingAPIClient;
 let profileClient: FacebookProfileAPIClient;

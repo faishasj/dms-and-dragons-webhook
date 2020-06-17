@@ -1,5 +1,5 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
-import { getGoogleServiceAccount } from '../Utils';
+import { getGoogleServiceAccount } from './Utils';
 
 const serviceAccount = process.env.NODE_ENV !== 'production' ? getGoogleServiceAccount() : undefined;
 const client = new SecretManagerServiceClient({

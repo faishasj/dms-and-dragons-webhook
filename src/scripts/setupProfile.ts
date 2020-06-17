@@ -1,6 +1,6 @@
 import axios from 'axios';
 import readline from 'readline';
-import { getSecret } from '../services/Secrets';
+import { getSecret } from '../Secrets';
 import { getProfile, Payloads } from '../Messenger';
 import Strings from '../Strings';
 import { CREATE_STORY_URL, BROWSE_STORIES_URL, URL_BUTTON } from '../Constants';

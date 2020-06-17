@@ -1,4 +1,4 @@
-import { User, StoryView, Story } from '../Types';
+import { User, StoryView, Story, DateTime } from '../Types';
 import { collection, Collection, SubCollection, newTimestamp } from './Utils';
 
 // User Data
@@ -34,6 +34,13 @@ export const createUser = async ({ id, ...data }: CreateUserSchema): Promise<Use
   } as User;
 
   return user;
+};
+/** Update User */
+export const updateUser = async ({ id, ...userData }: Partial<User>): Promise<boolean> => {
+  if (!id) throw new Error('No ID Specified for Update User Operation');
+  await collection(Collection.Users).doc(id).update(userData);
+
+  return true;
 };
 
 /** Get a User's Story View */
