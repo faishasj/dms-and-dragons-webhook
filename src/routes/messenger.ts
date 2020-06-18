@@ -5,7 +5,7 @@ import { getSecret } from '../Secrets';
 import { newUser, introduction } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
-import { directToLibrary, directToMyStories, readNewStory } from '../services/Stories';
+import { directToLibrary, directToMyStories, readNewStory, exitStory } from '../services/Stories';
 
 const router = Router();
 
@@ -38,6 +38,7 @@ router.post('/', asyncUtil(async (req, res) => {
 
   // Story Reading
   if (activeStory) {
+    if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
     
     return res.status(200).send();
   }
@@ -46,6 +47,8 @@ router.post('/', asyncUtil(async (req, res) => {
   // Menu Navigation
 
   if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
+
+  if (postbackPayload === Payloads.EXIT_STORY) exitStory(user);
 
   if (postbackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
     const storyId = postbackPayload.slice(Payloads.READ_NEW_STORY.length);

@@ -7,7 +7,7 @@ import Strings from '../Strings';
 
 // Stories Services
 
-export const directToMyStories = async ({ id }: User) => {
+export const directToMyStories = async ({ id }: User): Promise<void> => {
   const messenger = await getMessenger();
 
   const button = { ...URL_BUTTON, url: CREATE_STORY_URL, title: Strings.openMyStories };
@@ -15,7 +15,7 @@ export const directToMyStories = async ({ id }: User) => {
   messenger.toggleTyping(id, false);
 };
 
-export const directToLibrary = async ({ id }: User) => {
+export const directToLibrary = async ({ id }: User): Promise<void> => {
   const messenger = await getMessenger();
 
   const button = { ...URL_BUTTON, url: BROWSE_STORIES_URL, title: Strings.openLibrary };
@@ -23,11 +23,22 @@ export const directToLibrary = async ({ id }: User) => {
   messenger.toggleTyping(id, false);
 };
 
-export const readNewStory = async (userId: User['id'], storyId: Story['id']): Promise<void> => {
+export const readNewStory = async (id: User['id'], storyId: Story['id']): Promise<void> => {
   const messenger = await getMessenger();
 
-  updateUser({ id: userId, activeStory: storyId });
+  updateUser({ id, activeStory: storyId });
 
-  await waitTyping(userId, 2000);
-  await messenger.sendTextMessage(userId, `READ STORY: ${storyId}`);
+  await waitTyping(id, 2000);
+  await messenger.sendTextMessage(id, `READ STORY: ${storyId}`);
+};
+
+export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
+  const messenger = await getMessenger();
+  if (!activeStory) { // Not in a story
+    await messenger.sendTextMessage(id, Strings.cannotExit);
+    return;
+  }
+
+  updateUser({ id, activeStory: null });
+  await messenger.sendTextMessage(id, Strings.exit);
 };
