@@ -2,7 +2,7 @@ import Router from 'express';
 import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../Secrets';
-import { newUser, introduction } from '../services/User';
+import { newUser, introduction, sendOptions } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
 import { directToLibrary, directToMyStories, readNewStory, exitStory, readStory } from '../services/Stories';
@@ -39,26 +39,22 @@ router.post('/', asyncUtil(async (req, res) => {
   // Story Reading
   if (activeStory) {
     if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
-    await readStory(user);
+    else await readStory(user);
     return res.status(200).send();
   }
 
 
   // Menu Navigation
 
-  if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
-
-  if (postbackPayload === Payloads.EXIT_STORY) exitStory(user);
-
   if (postbackPayload?.slice(0, Payloads.READ_NEW_STORY.length) === Payloads.READ_NEW_STORY) {
     const storyId = postbackPayload.slice(Payloads.READ_NEW_STORY.length);
-    await readNewStory(userId, storyId);
-    messenger.toggleTyping(userId, false);
+    await readNewStory(user, storyId);
   }
-
-  if (quickReplyPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
-
-  if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
+  else if (postbackPayload === Payloads.EXIT_STORY) exitStory(user);
+  else if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
+  else if (quickReplyPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
+  else if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
+  else sendOptions(userId);
 
   return res.status(200).send();
 }));

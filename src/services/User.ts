@@ -51,7 +51,6 @@ export const introduction = async ({ id, name }: User) => {
     })),
   } as any);
 
-  await wait(2000);
   await sendOptions(id);
 };
 
@@ -72,4 +71,5 @@ export const sendOptions = async (id: User['id']) => {
       payload: Payloads.BROWSE_STORIES,
     }
   ]);
+  messenger.toggleTyping(id, false);
 }
