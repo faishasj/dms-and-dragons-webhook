@@ -1,6 +1,6 @@
 import Router from 'express';
 import { asyncUtil } from '../middleware/asyncUtil';
-import { readNewStory } from '../services/User';
+import { readNewStory } from '../services/Stories';
 
 const router = Router();
 

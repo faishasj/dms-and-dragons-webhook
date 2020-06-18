@@ -2,10 +2,10 @@ import Router from 'express';
 import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../Secrets';
-import { newUser, introduction, readNewStory } from '../services/User';
+import { newUser, introduction } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
-import { directToLibrary, directToMyStories } from '../services/Stories';
+import { directToLibrary, directToMyStories, readNewStory } from '../services/Stories';
 
 const router = Router();
 
