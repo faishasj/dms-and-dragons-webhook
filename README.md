@@ -32,12 +32,12 @@
 
     ```yml
     tunnels:
-    first:
-      addr: <WEBHOOK_PORT>
-      proto: http  
-    second:
-      addr: <WEBVIEW_PORT>
-      proto: http
+      first:
+        addr: <WEBHOOK_PORT>
+        proto: http  
+      second:
+        addr: <WEBVIEW_PORT>
+        proto: http
     ```
 
     and run:
@@ -48,7 +48,7 @@
 
 1.  **Include the https tunnel domains where necessary and setup environment variables.**
 
-    Copy the **https** domain for the webhook and use it to modify the callback URL for your app on developers.facebook.com/apps under Products > Messenger > Settings > Webhooks. You will need your verify token for this.
+    Copy the **https** domain for the webhook, add `/webhook` at the end, and use it to modify the callback URL for your app on developers.facebook.com/apps under Products > Messenger > Settings > Webhooks. You will need your verify token for this.
 
     If you also are tunneling the webview, copy the **https** domain for the webview and add it as an environment variable `DEV_WEBVIEW_URL` in .env. 
 
