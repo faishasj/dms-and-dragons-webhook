@@ -1,8 +1,8 @@
 <div align='center'>
-  <img src='dragon_logo.png' width=80></img>
+  <img src='dragon_logo.png' width=120></img>
 </div>
 <h1 align='center'>
-  DM's and Dragons
+  DMs and Dragons
 </h1>
 
 <p align='center'>A Facebook Messenger bot for creative, immersive and interactive storytelling in the age of online messaging.
@@ -28,7 +28,7 @@
     ./ngrok http <WEBHOOK_PORT>
     ```
 
-    If you are tunneling both the webhook and the webview, then you need to add the following to your ngrok.yml:
+    If you are tunneling both the webhook and the [webview](https://github.com/faishasj/dms-and-dragons-webview), then you need to add the following to your ngrok.yml:
 
     ```yml
     tunnels:
