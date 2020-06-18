@@ -51,6 +51,12 @@ export const introduction = async ({ id, name }: User) => {
   } as any);
 
   await wait(2000);
+  await sendOptions(id);
+};
+
+export const sendOptions = async (id: User['id']) => {
+  const messenger = await getMessenger();
+
   await waitTyping(id, 3000);
 
   await messenger.sendQuickReplyMessage(id, Strings.actionPrompt, [
@@ -65,7 +71,7 @@ export const introduction = async ({ id, name }: User) => {
       payload: Payloads.BROWSE_STORIES,
     }
   ]);
-};
+}
 
 export const readNewStory = async (userId: User['id'], storyId: Story['id']): Promise<void> => {
   const messenger = await getMessenger();
