@@ -18,4 +18,12 @@ export default {
   exitStory: '🚫 Exit Story',
   cannotExit: 'Not currently in a story. Browse Stories to find something great!',
   exit: 'Hope you enjoyed! Keep reading this story from this point whenever you want',
+
+  newStory: (title: string) => {
+    const storyIntros = [
+      `Without further ado... ${title}`,
+      `Presenting... ${title}`,
+    ];
+    return storyIntros[Math.floor(Math.random() * storyIntros.length)];
+  },
 };
