@@ -14,4 +14,6 @@ export default {
 
   openMyStories: '✍️ Create Story',
   openMyStoriesPrompt: 'Click below to open the DM Creator and get writing! 🤔',
+
+  exitStory: '🚫 Exit Story',
 };

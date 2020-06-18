@@ -10,6 +10,7 @@ export enum Payloads {
   READ_NEW_STORY = 'READ:', // append story id
   CREATE_STORY = 'CREATE_STORY',
   BROWSE_STORIES = 'BROWSE_STORIES',
+  EXIT_STORY = 'EXIT_STORY',
 };
 
 
