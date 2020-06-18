@@ -1,8 +1,7 @@
 import { CREATE_STORY_URL, URL_BUTTON, BROWSE_STORIES_URL } from '../Constants';
 import { updateUser, getUser } from '../model/User';
-import { getMessenger } from '../Messenger';
+import { getMessenger, waitTyping } from '../Messenger';
 import { User, Story } from '../Types';
-import { waitTyping } from './User';
 import Strings from '../Strings';
 import { getStory } from '../model';
 

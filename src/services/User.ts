@@ -1,20 +1,11 @@
 import { MESSAGE_TEMPLATE_TYPE, QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
-import { User, Story } from '../Types';
-import { getMessenger, Payloads } from '../Messenger';
+import { User } from '../Types';
+import { getMessenger, Payloads, waitTyping } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
-import { updateUser } from '../model/User';
 
 // User Service
-
-
-export const waitTyping = async (userId: User['id'], duration = 1000): Promise<void> => {
-  const messenger = await getMessenger();
-  await messenger.toggleTyping(userId, true);
-  await wait(duration);
-  messenger.toggleTyping(userId, false);
-}
 
 export const newUser = async (userId: User['id']): Promise<User> => {
   const messenger = await getMessenger();

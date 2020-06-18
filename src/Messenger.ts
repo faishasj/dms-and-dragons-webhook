@@ -1,5 +1,7 @@
 import { FacebookMessagingAPIClient, FacebookProfileAPIClient } from 'fb-messenger-bot-api';
 import { getSecret } from './Secrets';
+import { User } from './Types';
+import { wait } from './Utils';
 
 let messagingClient: FacebookMessagingAPIClient;
 let profileClient: FacebookProfileAPIClient;
@@ -29,3 +31,10 @@ export const getProfile = async (): Promise<FacebookProfileAPIClient> => {
   }
   return profileClient;
 };
+
+export const waitTyping = async (userId: User['id'], duration = 1000): Promise<void> => {
+  const messenger = await getMessenger();
+  await messenger.toggleTyping(userId, true);
+  await wait(duration);
+  messenger.toggleTyping(userId, false);
+}
