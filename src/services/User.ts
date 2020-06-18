@@ -4,6 +4,7 @@ import { getMessenger, Payloads } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
+import { updateUser } from '../model/User';
 
 // User Service
 
@@ -75,6 +76,8 @@ export const sendOptions = async (id: User['id']) => {
 
 export const readNewStory = async (userId: User['id'], storyId: Story['id']): Promise<void> => {
   const messenger = await getMessenger();
+
+  updateUser({ id: userId, activeStory: storyId });
 
   await waitTyping(userId, 2000);
   await messenger.sendTextMessage(userId, `READ STORY: ${storyId}`);

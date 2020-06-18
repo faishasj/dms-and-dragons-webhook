@@ -1,6 +1,6 @@
 import Router from 'express';
 import { asyncUtil } from '../middleware/asyncUtil';
-import { updateUser } from '../model/User';
+import { readNewStory } from '../services/User';
 
 const router = Router();
 
@@ -11,9 +11,7 @@ router.post('/readStory', asyncUtil<{}, {}, ReadStoryBody>(async (req, res) => {
   if (!storyId || !userId || typeof storyId !== 'string' || typeof userId !== 'string')
     return res.status(400).send();
   
-  await updateUser({ activeStory: storyId });
-  
-
+  await readNewStory(userId, storyId);
   return res.status(200).send();
 }));
 
