@@ -13,7 +13,7 @@ export type DateTime = firestore.Timestamp;
 export interface User {
   id: string;
   name: string;
-  activeStory: StoryView['id'];
+  activeStory?: StoryView['id'];
 }
 
 export interface Story {

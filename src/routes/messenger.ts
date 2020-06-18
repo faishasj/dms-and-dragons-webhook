@@ -13,27 +13,37 @@ const router = Router();
 /** Incoming Message Endpoint */
 router.post('/', asyncUtil(async (req, res) => {
   const { body } = req;
-
+  
+  // Parsing
   const parsed = FacebookMessageParser.parsePayload(body);
   const message = parsed[0];
 
-  const { id: userId } = message.sender;
+  const { id } = message.sender;
   const { payload: postbackPayload } = message.postback || {};
   const { payload: quickReplyPayload } =  message.message?.quick_reply || {};
   const { text } = message.message || {};
 
+  // Basic Message Acknowledgment
   const messenger = await getMessenger();
-  messenger.markSeen(userId);
-  messenger.toggleTyping(userId, true);
+  messenger.markSeen(id);
+  messenger.toggleTyping(id, true);
 
-  let user = await getUser(userId);
-
+  // User Data
+  let user = await getUser(id);
   if (!user) { // New User
-    user = await newUser(userId);
+    user = await newUser(id);
     if (postbackPayload !== Payloads.NEW_CONVERSATION) console.error(`User was Missing\n${JSON.stringify(message)}`);
   }
+  const { id: userId, activeStory } = user;
 
-  // Existing User
+  // Story Reading
+  if (activeStory) {
+    
+    return res.status(200).send();
+  }
+
+
+  // Menu Navigation
 
   if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
 
