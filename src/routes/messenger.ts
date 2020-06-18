@@ -5,7 +5,7 @@ import { getSecret } from '../Secrets';
 import { newUser, introduction } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
-import { directToLibrary, directToMyStories, readNewStory, exitStory } from '../services/Stories';
+import { directToLibrary, directToMyStories, readNewStory, exitStory, readStory } from '../services/Stories';
 
 const router = Router();
 
@@ -39,7 +39,7 @@ router.post('/', asyncUtil(async (req, res) => {
   // Story Reading
   if (activeStory) {
     if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
-    
+    await readStory(user);
     return res.status(200).send();
   }
 

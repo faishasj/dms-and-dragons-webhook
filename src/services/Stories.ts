@@ -42,3 +42,12 @@ export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
   updateUser({ id, activeStory: null });
   await messenger.sendTextMessage(id, Strings.exit);
 };
+
+export const readStory = async (user: User): Promise<void> => {
+  const { id, activeStory } = user;
+  if (!activeStory) return console.warn('Reading with no active story! ' + id)
+  const messenger = await getMessenger();
+
+  await waitTyping(id, 2000);
+  await messenger.sendTextMessage(id, 'READING STORY');
+};
