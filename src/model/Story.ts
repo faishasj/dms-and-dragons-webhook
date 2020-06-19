@@ -71,6 +71,17 @@ export const getStoryStep = async (storyId: Story['id'], stepCount: Step['stepCo
   } as Step;
   return step;
 }
+/** Get Story Step by ID */
+export const getStoryStepById = async (storyId: Story['id'], stepId: Step['id']): Promise<Step | null> => {
+  const doc = await collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps).doc(stepId).get();
+  if (!doc.exists) return null;
+
+  const step = {
+    ...doc.data(),
+    id: doc.id,
+  } as Step;
+  return step;
+};
 /** Create Story */
 export const createStory = async (data: CreateStorySchema): Promise<Story> => {
   const ref = await collection(Collection.Stories).add(data);
