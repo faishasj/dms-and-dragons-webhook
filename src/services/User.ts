@@ -4,6 +4,7 @@ import { getMessenger, Payloads, waitTyping } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
+import { updateUser } from '../model/User';
 
 // User Service
 
@@ -64,3 +65,7 @@ export const sendOptions = async (id: User['id']) => {
   ]);
   messenger.toggleTyping(id, false);
 }
+
+
+export const setUserProcessingStatus = (userId: User['id'], status: boolean) =>
+  updateUser({ id: userId, processing: status });

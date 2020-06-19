@@ -2,7 +2,7 @@ import Router from 'express';
 import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../Secrets';
-import { newUser, introduction, sendOptions } from '../services/User';
+import { newUser, introduction, sendOptions, setUserProcessingStatus } from '../services/User';
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
 import { directToLibrary, directToMyStories, readNewStory, exitStory, readStory } from '../services/Stories';
@@ -30,11 +30,17 @@ router.post('/', asyncUtil(async (req, res) => {
 
   // User Data
   let user = await getUser(id);
+  const isNewUser = !user;
   if (!user) { // New User
     user = await newUser(id);
     if (postbackPayload !== Payloads.NEW_CONVERSATION) console.error(`User was Missing\n${JSON.stringify(message)}`);
   }
-  const { id: userId, activeStory } = user;
+  const { id: userId, activeStory, processing } = user;
+
+  if (!isNewUser) {
+    if (processing) return res.status(200).send(); // Currently responding
+    setUserProcessingStatus(userId, true);
+  }
 
   // Story Reading
   if (activeStory && !!text && !!messageId) {
@@ -55,6 +61,8 @@ router.post('/', asyncUtil(async (req, res) => {
   else if (quickReplyPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
   else if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
   else sendOptions(userId);
+
+  await setUserProcessingStatus(userId, false);
 
   return res.status(200).send();
 }));
