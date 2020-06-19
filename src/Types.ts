@@ -35,6 +35,7 @@ export interface StoryView {
   messages: {
     fbMessageId: string;
     stepCounter: number;
+    stepId: Step['id'];
     text: string;
   }[];
   startTime: DateTime;
