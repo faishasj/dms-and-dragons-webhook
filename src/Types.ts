@@ -30,8 +30,7 @@ export interface Story {
 }
 
 export interface StoryView {
-  id: string;
-  storyId: Story['id'];
+  id: Story['id'];
   stepCounter: number;
   messages: {
     fbMessageId: string;

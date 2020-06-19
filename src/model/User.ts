@@ -57,7 +57,7 @@ export const getStoryView = async (userId: User['id'], storyViewId: StoryView['i
   return storyView;
 }
 /** Create a User's Story View */
-export const createStoryView = async (userId: User['id'], data: CreateStoryViewSchema): Promise<StoryView> => {
+export const createStoryView = async (userId: User['id'], { storyId, ...data }: CreateStoryViewSchema): Promise<StoryView> => {
   const newData: Partial<StoryView> = {
     ...data,
     messages: [],
@@ -65,12 +65,12 @@ export const createStoryView = async (userId: User['id'], data: CreateStoryViewS
     startTime: newTimestamp(),
     endTime: null,
   };
-  const doc = await collection(Collection.Users).doc(userId)
-    .collection(SubCollection.StoryViews).add(newData);
+  await collection(Collection.Users).doc(userId)
+    .collection(SubCollection.StoryViews).doc(storyId).set(newData);
 
   const storyView = {
     ...newData,
-    id: doc.id,
+    id: storyId,
   } as StoryView;
 
   return storyView;
