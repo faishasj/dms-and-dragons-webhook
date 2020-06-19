@@ -21,7 +21,7 @@ router.post('/', asyncUtil(async (req, res) => {
   const { id } = message.sender;
   const { payload: postbackPayload } = message.postback || {};
   const { payload: quickReplyPayload } =  message.message?.quick_reply || {};
-  const { text } = message.message || {};
+  const { text, mid: messageId } = message.message || {};
 
   // Basic Message Acknowledgment
   const messenger = await getMessenger();
@@ -37,9 +37,9 @@ router.post('/', asyncUtil(async (req, res) => {
   const { id: userId, activeStory } = user;
 
   // Story Reading
-  if (activeStory && !!text) {
+  if (activeStory && !!text && !!messageId) {
     if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
-    else await readStory(user, text);
+    else await readStory(user, { text, messageId });
     return res.status(200).send();
   }
 

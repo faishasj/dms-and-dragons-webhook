@@ -1,5 +1,5 @@
 import { CREATE_STORY_URL, URL_BUTTON, BROWSE_STORIES_URL } from '../Constants';
-import { updateUser, getUser, createStoryView, getStoryView } from '../model/User';
+import { updateUser, getUser, createStoryView, getStoryView, updateStoryView } from '../model/User';
 import { getMessenger, waitTyping } from '../Messenger';
 import { User, Story, StoryView } from '../Types';
 import Strings from '../Strings';
@@ -37,7 +37,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
 
   await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.newStory(story.metadata.title));
-  await readStory(user, '', storyId, await storyViewPromise);
+  await readStory(user, { text: '', messageId: '' }, storyId, await storyViewPromise);
 };
 
 export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
@@ -52,7 +52,12 @@ export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
   messenger.toggleTyping(id, false);
 };
 
-export const readStory = async (user: User, text: string, maybeStoryId?: Story['id'], maybeStoryView?: StoryView): Promise<void> => {
+export const readStory = async (
+  user: User,
+  { text, messageId }: { text: string; messageId: string },
+    maybeStoryId?: Story['id'],
+    maybeStoryView?: StoryView,
+): Promise<void> => {
   const { id, activeStory } = user;
   if (!maybeStoryId && !activeStory) return console.warn(`Reading with no active story! ${maybeStoryId} ${activeStory}`)
   const messenger = await getMessenger();
@@ -62,13 +67,13 @@ export const readStory = async (user: User, text: string, maybeStoryId?: Story['
   const { id: storyId } = story;
   const storyView = maybeStoryView || await getStoryView(id, storyId);
   if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
-  const { stepCounter } = storyView;
+  const { stepCounter, messages } = storyView;
 
   const steps = await getStorySteps(story.id, stepCounter);
   if (!steps.length) return console.warn(`Cannot find any steps ${storyId} ${stepCounter}`);
   let currentStep = null;
-  if (steps.length > 1 && storyView.stepCounter > 0) {
-    const previousMessage = storyView.messages.find((message) => message.stepCounter === stepCounter - 1);
+  if (steps.length > 1 && stepCounter > 0) {
+    const previousMessage = messages.find((message) => message.stepCounter === stepCounter - 1);
     if (previousMessage) {
       const previousStep = await getStoryStepById(storyId, previousMessage.stepId);
       if (previousStep) {
@@ -90,6 +95,11 @@ export const readStory = async (user: User, text: string, maybeStoryId?: Story['
       await messenger.sendTextMessage(id, text);
     };
 
+    updateStoryView(id, {
+      ...storyView,
+      stepCounter: stepCounter + 1,
+      messages: [...messages, { text, stepCounter, fbMessageId: messageId, stepId: currentStep.id }],
+    });
   }
 
 
