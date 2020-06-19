@@ -19,6 +19,8 @@ export {
   createUser,
   getStoryView,
   getUser,
+  updateStoryView,
+  updateUser,
 } from './User';
 
 export {
@@ -28,4 +30,6 @@ export {
   getStory,
   getStories,
   getStorySteps,
+  getStoryStep,
+  getStoryStepById
 } from './Story';

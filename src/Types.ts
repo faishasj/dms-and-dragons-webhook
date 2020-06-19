@@ -54,6 +54,7 @@ export interface Step {
   }[];
   messages: {
     text: string;
+    waitingTime: number;
     typingTime: number;
   }[];
 }

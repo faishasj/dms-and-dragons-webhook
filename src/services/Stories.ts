@@ -1,10 +1,18 @@
 import { CREATE_STORY_URL, URL_BUTTON, BROWSE_STORIES_URL } from '../Constants';
-import { updateUser, getUser, createStoryView, getStoryView, updateStoryView } from '../model/User';
 import { getMessenger, waitTyping } from '../Messenger';
 import { User, Story, StoryView } from '../Types';
+import {
+  getUser,
+  updateUser,
+  getStory,
+  createStoryView,
+  getStoryView,
+  getStorySteps,
+  getStoryStepById,
+  updateStoryView,
+} from '../model';
+import { wait } from '../Utils';
 import Strings from '../Strings';
-import { getStory } from '../model';
-import { getStoryStep, getStorySteps, getStoryStepById } from '../model/Story';
 
 // Stories Services
 
@@ -90,7 +98,8 @@ export const readStory = async (
 
   if (currentStep) {
 
-    for ( const { typingTime, text } of currentStep.messages) { // iterative loop to maintain order
+    for (const { waitingTime, typingTime, text } of currentStep.messages) { // iterative loop to maintain order
+      await wait(waitingTime);
       await waitTyping(id, typingTime);
       await messenger.sendTextMessage(id, text);
     };
