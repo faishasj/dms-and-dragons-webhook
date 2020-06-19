@@ -4,6 +4,7 @@ import { getMessenger, waitTyping } from '../Messenger';
 import { User, Story, StoryView } from '../Types';
 import Strings from '../Strings';
 import { getStory } from '../model';
+import { getStoryStep } from '../model/Story';
 
 // Stories Services
 
@@ -32,11 +33,11 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   const story = await getStory(storyId);
   if (!story) return console.warn('Story does not exist! ' + storyId);
   updateUser({ id, activeStory: storyId });
-  createStoryView(id, { storyId });
+  const storyViewPromise = createStoryView(id, { storyId });
 
   await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.newStory(story.metadata.title));
-  await readStory(user, storyId);
+  await readStory(user, storyId, await storyViewPromise);
 };
 
 export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
@@ -51,12 +52,23 @@ export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
   messenger.toggleTyping(id, false);
 };
 
-export const readStory = async (user: User, storyId?: Story['id']): Promise<void> => {
+export const readStory = async (user: User, storyId?: Story['id'], maybeStoryView?: StoryView): Promise<void> => {
   const { id, activeStory } = user;
   if (!storyId && !activeStory) return console.warn(`Reading with no active story! ${storyId} ${activeStory}`)
   const messenger = await getMessenger();
 
-  await waitTyping(id, 2000);
-  await messenger.sendTextMessage(id, 'READING STORY');
+  const story = await getStory((storyId || activeStory) as string);
+  if (!story) return console.warn(`Cannot find Story ${storyId} ${activeStory}`);
+  const storyView = maybeStoryView || await getStoryView(id, story.id);
+  if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${story.id}`);
+  const currentStep = await getStoryStep(story.id, storyView.stepCounter)
+  if (!currentStep) return console.warn(`Cannot find current Step ${story.id} ${storyView.stepCounter}`);
+
+  for ( const { typingTime, text } of currentStep.messages) { // iterative loop to maintain order
+    await waitTyping(id, typingTime);
+    await messenger.sendTextMessage(id, text);
+  };
+
+
   messenger.toggleTyping(id, false);
 };
