@@ -14,6 +14,7 @@ export interface User {
   id: string;
   name: string;
   activeStory: StoryView['id'] | null;
+  processing: boolean;
 }
 
 export interface Story {
