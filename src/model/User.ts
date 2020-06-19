@@ -1,4 +1,4 @@
-import { User, StoryView, Story, DateTime } from '../Types';
+import { User, StoryView, Story } from '../Types';
 import { collection, Collection, SubCollection, newTimestamp } from './Utils';
 
 // User Data
@@ -63,15 +63,24 @@ export const createStoryView = async (userId: User['id'], { storyId, ...data }: 
     messages: [],
     stepCounter: 0,
     startTime: newTimestamp(),
+    lastOpened: newTimestamp(),
     endTime: null,
   };
-  await collection(Collection.Users).doc(userId)
-    .collection(SubCollection.StoryViews).doc(storyId).set(newData);
+  const ref = collection(Collection.Users).doc(userId)
+    .collection(SubCollection.StoryViews).doc(storyId);
 
-  const storyView = {
+  const existing = await ref.get();
+  if (existing.exists) await ref.update({ lastOpened: newData.lastOpened });
+  else await ref.set(newData);
+
+  const storyView = (existing.exists ? {
+    ...existing.data(),
+    lastOpened: newData.lastOpened,
+    id: storyId,
+  } : {
     ...newData,
     id: storyId,
-  } as StoryView;
+  }) as StoryView;
 
   return storyView;
 }

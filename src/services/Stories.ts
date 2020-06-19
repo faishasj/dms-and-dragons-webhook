@@ -1,7 +1,7 @@
 import { CREATE_STORY_URL, URL_BUTTON, BROWSE_STORIES_URL } from '../Constants';
-import { updateUser, getUser } from '../model/User';
+import { updateUser, getUser, createStoryView, getStoryView } from '../model/User';
 import { getMessenger, waitTyping } from '../Messenger';
-import { User, Story } from '../Types';
+import { User, Story, StoryView } from '../Types';
 import Strings from '../Strings';
 import { getStory } from '../model';
 
@@ -32,6 +32,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   const story = await getStory(storyId);
   if (!story) return console.warn('Story does not exist! ' + storyId);
   updateUser({ id, activeStory: storyId });
+  createStoryView(id, { storyId });
 
   await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.newStory(story.metadata.title));

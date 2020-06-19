@@ -39,6 +39,7 @@ export interface StoryView {
   }[];
   startTime: DateTime;
   endTime: DateTime | null;
+  lastOpened: DateTime;
 }
 
 export interface Step {
