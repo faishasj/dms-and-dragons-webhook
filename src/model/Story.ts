@@ -46,9 +46,9 @@ export const getStories = async (count?: number): Promise<Story[]> => {
   return stories;
 };
 /** Get Story Steps */
-export const getStorySteps = async (storyId: Story['id']): Promise<Step[]> => {
-  const { docs } = await collection(Collection.Stories).doc(storyId)
-    .collection(SubCollection.Steps).get();
+export const getStorySteps = async (storyId: Story['id'], stepCount?: Step['stepCount']): Promise<Step[]> => {
+  const ref = collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps);
+  const { docs } = await (stepCount ? ref.where('stepCount', '==', stepCount) : ref).get();
   
   const steps = docs.map(doc => ({
     ...doc.data(),
