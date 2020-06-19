@@ -84,3 +84,11 @@ export const createStoryView = async (userId: User['id'], { storyId, ...data }: 
 
   return storyView;
 }
+/** Update a Story View */
+export const updateStoryView = async (userId: User['id'], { id, ...data }: Partial<StoryView>): Promise<boolean> => {
+  if (!id) throw new Error('No ID Specified for Update Story View Operation');
+  data.lastMessage = newTimestamp();
+  await collection(Collection.Users).doc(userId).collection(SubCollection.StoryViews).doc(id).update(data);
+
+  return true;
+};
