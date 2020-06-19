@@ -4,7 +4,7 @@ import { getMessenger, waitTyping } from '../Messenger';
 import { User, Story, StoryView } from '../Types';
 import Strings from '../Strings';
 import { getStory } from '../model';
-import { getStoryStep } from '../model/Story';
+import { getStoryStep, getStorySteps, getStoryStepById } from '../model/Story';
 
 // Stories Services
 
@@ -37,7 +37,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
 
   await waitTyping(id, 2000);
   await messenger.sendTextMessage(id, Strings.newStory(story.metadata.title));
-  await readStory(user, storyId, await storyViewPromise);
+  await readStory(user, '', storyId, await storyViewPromise);
 };
 
 export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
@@ -52,22 +52,45 @@ export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
   messenger.toggleTyping(id, false);
 };
 
-export const readStory = async (user: User, storyId?: Story['id'], maybeStoryView?: StoryView): Promise<void> => {
+export const readStory = async (user: User, text: string, maybeStoryId?: Story['id'], maybeStoryView?: StoryView): Promise<void> => {
   const { id, activeStory } = user;
-  if (!storyId && !activeStory) return console.warn(`Reading with no active story! ${storyId} ${activeStory}`)
+  if (!maybeStoryId && !activeStory) return console.warn(`Reading with no active story! ${maybeStoryId} ${activeStory}`)
   const messenger = await getMessenger();
 
-  const story = await getStory((storyId || activeStory) as string);
-  if (!story) return console.warn(`Cannot find Story ${storyId} ${activeStory}`);
-  const storyView = maybeStoryView || await getStoryView(id, story.id);
-  if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${story.id}`);
-  const currentStep = await getStoryStep(story.id, storyView.stepCounter)
-  if (!currentStep) return console.warn(`Cannot find current Step ${story.id} ${storyView.stepCounter}`);
+  const story = await getStory((maybeStoryId || activeStory) as string);
+  if (!story) return console.warn(`Cannot find Story ${maybeStoryId} ${activeStory}`);
+  const { id: storyId } = story;
+  const storyView = maybeStoryView || await getStoryView(id, storyId);
+  if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
+  const { stepCounter } = storyView;
 
-  for ( const { typingTime, text } of currentStep.messages) { // iterative loop to maintain order
-    await waitTyping(id, typingTime);
-    await messenger.sendTextMessage(id, text);
-  };
+  const steps = await getStorySteps(story.id, stepCounter);
+  if (!steps.length) return console.warn(`Cannot find any steps ${storyId} ${stepCounter}`);
+  let currentStep = null;
+  if (steps.length > 1 && storyView.stepCounter > 0) {
+    const previousMessage = storyView.messages.find((message) => message.stepCounter === stepCounter - 1);
+    if (previousMessage) {
+      const previousStep = await getStoryStepById(storyId, previousMessage.stepId);
+      if (previousStep) {
+
+        const matchedOption = previousStep.options
+          .find(({ requiredText }) => requiredText.toLowerCase() === text.toLowerCase());
+        if (matchedOption) currentStep = await getStoryStepById(storyId, matchedOption.stepId);
+        else messenger.sendTextMessage(id, story.metadata.failureMessage);
+
+      } else console.warn('Multiple Steps but previous step not found');
+    } else console.warn('Multiple Steps but no previous message found');
+  } else currentStep = steps[0];
+
+
+  if (currentStep) {
+
+    for ( const { typingTime, text } of currentStep.messages) { // iterative loop to maintain order
+      await waitTyping(id, typingTime);
+      await messenger.sendTextMessage(id, text);
+    };
+
+  }
 
 
   messenger.toggleTyping(id, false);

@@ -37,9 +37,9 @@ router.post('/', asyncUtil(async (req, res) => {
   const { id: userId, activeStory } = user;
 
   // Story Reading
-  if (activeStory) {
+  if (activeStory && !!text) {
     if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
-    else await readStory(user);
+    else await readStory(user, text);
     return res.status(200).send();
   }
 
