@@ -5,11 +5,12 @@ import { MessageBody, AttachmentType, MessengerResponse, MessengerSuccess, Messe
 // Facebook Messenger API
 
 
-const sendMessage = async (psid: string, messageBody: MessageBody): Promise<MessengerResponse> => {
+const sendMessage = async (psid: string, messageBody: MessageBody, personaId?: string): Promise<MessengerResponse> => {
   try {
     const { data } = await getApi().post<MessengerSuccess>('/me/messages', {
       recipient: { id: psid },
       message: messageBody,
+      persona_id: personaId,
     });
     return data;
   } catch (e) {
@@ -19,13 +20,14 @@ const sendMessage = async (psid: string, messageBody: MessageBody): Promise<Mess
   }
 };
 
-export const sendTextMessage = (psid: string, text: string) => sendMessage(psid, { text });
+export const sendTextMessage = (psid: string, text: string, personaId?: string) =>
+  sendMessage(psid, { text }, personaId);
 
-export const sendImageMessage = (psid: string, imageUrl: string) =>
+export const sendImageMessage = (psid: string, imageUrl: string, personaId?: string) =>
   sendMessage(psid, {
     attachment: {
       type: AttachmentType.Image,
       payload: { url: imageUrl, is_reusable: false }
     },
-  });
+  }, personaId);
 
