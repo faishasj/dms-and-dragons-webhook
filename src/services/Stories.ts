@@ -76,12 +76,16 @@ export const readStory = async (
   if (!maybeStoryId && !activeStory) return console.warn(`Reading with no active story! ${maybeStoryId} ${activeStory}`)
   const messenger = await getMessenger();
 
+  /** Basic Story Data */
+
   const story = await getStory((maybeStoryId || activeStory) as string);
   if (!story) return console.warn(`Cannot find Story ${maybeStoryId} ${activeStory}`);
   const { id: storyId } = story;
   const storyView = maybeStoryView || await getStoryView(id, storyId);
   if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
   const { lastStep, messages } = storyView;
+
+  /** Determining Step/Position in Story */
 
   let currentStep: Step | null = null;
   if (!lastStep) currentStep = await getRootStoryStep(storyId); // Start of story, root step
@@ -100,6 +104,7 @@ export const readStory = async (
     }
   }
 
+  /** Story Messages to user */
 
   if (currentStep) {
     const end = !currentStep.options || currentStep.options.length <= 0;
@@ -118,14 +123,14 @@ export const readStory = async (
       else await messenger.sendTextMessage(id, text);
     };
 
-    if (end) {
+    if (end) { // End of Story
       exitStory(user, true);
       await wait(4000);
       await messenger.sendTextMessage(id, Strings.endStory(story.metadata.title));
       await sendOptions(id);
     }
 
-    updateStoryView(id, {
+    updateStoryView(id, { // Record new Story Status
       ...storyView,
       lastStep: end ? null : currentStep.id, // Reset to start if it was the end
       endTime: end ? newTimestamp() : null,
