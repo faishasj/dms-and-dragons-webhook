@@ -14,6 +14,8 @@ import {
 import { wait } from '../Utils';
 import Strings from '../Strings';
 import { QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
+import { sendOptions } from './User';
+import { newTimestamp } from '../model/Utils';
 
 // Stories Services
 
@@ -49,7 +51,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   await readStory(user, { text: '', messageId: '' }, storyId, await storyViewPromise);
 };
 
-export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
+export const exitStory = async ({ id, activeStory }: User, end = false): Promise<void> => {
   const messenger = await getMessenger();
   if (!activeStory) { // Not in a story
     await messenger.sendTextMessage(id, Strings.cannotExit);
@@ -57,8 +59,10 @@ export const exitStory = async ({ id, activeStory }: User): Promise<void> => {
   }
 
   updateUser({ id, activeStory: null });
-  await messenger.sendTextMessage(id, Strings.exit);
-  messenger.toggleTyping(id, false);
+  if (!end) {
+    await messenger.sendTextMessage(id, Strings.exit);
+    messenger.toggleTyping(id, false);
+  }
 };
 
 export const readStory = async (
@@ -97,7 +101,8 @@ export const readStory = async (
 
 
   if (currentStep) {
-    const nextOptions = currentStep.options.filter(({ requiredText }) => requiredText);
+    const end = !currentStep.options || currentStep.options.length <= 0;
+    const nextOptions = end ? [] : currentStep.options.filter(({ requiredText }) => requiredText);
 
     // iterative loop to maintain order of messages
     for (const [i, { waitingTime, typingTime, text }] of currentStep.messages.entries()) {
@@ -112,9 +117,17 @@ export const readStory = async (
       else await messenger.sendTextMessage(id, text);
     };
 
+    if (end) {
+      exitStory(user, true);
+      await wait(4000);
+      await messenger.sendTextMessage(id, Strings.endStory(story.metadata.title));
+      await sendOptions(id);
+    }
+
     updateStoryView(id, {
       ...storyView,
-      lastStep: currentStep.id,
+      lastStep: end ? null : currentStep.id, // Reset to start if it was the end
+      endTime: end ? newTimestamp() : null,
       messages: [...messages, { text, fbMessageId: messageId, stepId: currentStep.id }],
     });
   }

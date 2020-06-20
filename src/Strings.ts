@@ -26,4 +26,11 @@ export default {
     ];
     return storyIntros[Math.floor(Math.random() * storyIntros.length)];
   },
+  endStory: (title: string) => {
+    const storyConclusions = [
+      `That concludes ${title}. Thanks for reading`,
+      `That is the end of ${title}. Thanks for reading`,
+    ];
+    return storyConclusions[Math.floor(Math.random() * storyConclusions.length)];
+  },
 };
