@@ -38,15 +38,17 @@ router.post('/', asyncUtil(async (req, res) => {
   }
   const { id: userId, activeStory, processing } = user;
 
+  let setProcessingPromise: Promise<boolean> | null = null;
   if (!isNewUser) {
     if (processing) return res.status(200).send(); // Currently responding
-    setUserProcessingStatus(userId, true);
+    setProcessingPromise = setUserProcessingStatus(userId, true);
   }
 
   // Story Reading
   if (activeStory && !!text && !!messageId) {
     if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
     else await readStory(user, { text, messageId });
+    if (setProcessingPromise) await setProcessingPromise;
     await setUserProcessingStatus(userId, false);
     return res.status(200).send();
   }
@@ -64,6 +66,7 @@ router.post('/', asyncUtil(async (req, res) => {
   else if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
   else sendOptions(userId, Strings.unknownCommand);
 
+  if (setProcessingPromise) await setProcessingPromise;
   await setUserProcessingStatus(userId, false);
   return res.status(200).send();
 }));
