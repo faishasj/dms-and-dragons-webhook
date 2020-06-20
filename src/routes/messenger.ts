@@ -3,7 +3,7 @@ import { FacebookMessageParser, ValidateWebhook } from 'fb-messenger-bot-api';
 import { asyncUtil } from '../middleware/asyncUtil';
 import { getSecret } from '../Secrets';
 import { newUser, introduction, sendOptions, setUserProcessingStatus } from '../services/User';
-import { Payloads, getMessenger } from '../Messenger';
+import { Payloads, getMessenger, init } from '../Messenger';
 import { getUser } from '../model';
 import { directToLibrary, directToMyStories, readNewStory, exitStory, readStory } from '../services/Stories';
 import Strings from '../Strings';
@@ -14,6 +14,8 @@ const router = Router();
 /** Incoming Message Endpoint */
 router.post('/', asyncUtil(async (req, res) => {
   const { body } = req;
+
+  const initPromise = getSecret('PAGE_ACCESS_TOKEN').then(tok => init(tok));
   
   // Parsing
   const parsed = FacebookMessageParser.parsePayload(body);
@@ -43,6 +45,8 @@ router.post('/', asyncUtil(async (req, res) => {
     if (processing) return res.status(200).send(); // Currently responding
     setProcessingPromise = setUserProcessingStatus(userId, true);
   }
+
+  await initPromise;
 
   // Story Reading
   if (activeStory && !!text && !!messageId) {
