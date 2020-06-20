@@ -6,6 +6,7 @@ import { newUser, introduction, sendOptions, setUserProcessingStatus } from '../
 import { Payloads, getMessenger } from '../Messenger';
 import { getUser } from '../model';
 import { directToLibrary, directToMyStories, readNewStory, exitStory, readStory } from '../services/Stories';
+import Strings from '../Strings';
 
 const router = Router();
 
@@ -61,7 +62,7 @@ router.post('/', asyncUtil(async (req, res) => {
   else if (postbackPayload === Payloads.NEW_CONVERSATION) introduction(user);
   else if (quickReplyPayload === Payloads.BROWSE_STORIES) directToLibrary(user);
   else if (quickReplyPayload === Payloads.CREATE_STORY) directToMyStories(user);
-  else sendOptions(userId);
+  else sendOptions(userId, Strings.unknownCommand);
 
   await setUserProcessingStatus(userId, false);
   return res.status(200).send();

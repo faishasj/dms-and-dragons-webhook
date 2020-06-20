@@ -52,12 +52,12 @@ export const sendPreview = async (id: User['id'], maybeStories?: Story[], storyC
   } as any);
 };
 
-export const sendOptions = async (id: User['id']) => {
+export const sendOptions = async (id: User['id'], text = Strings.actionPrompt) => {
   const messenger = await getMessenger();
 
   await waitTyping(id, 3000);
 
-  await messenger.sendQuickReplyMessage(id, Strings.actionPrompt, [
+  await messenger.sendQuickReplyMessage(id, text, [
     {
       content_type: QUICK_REPLY_TYPE.TEXT,
       title: Strings.openMyStories,

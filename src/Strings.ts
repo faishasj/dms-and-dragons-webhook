@@ -7,6 +7,7 @@ export default {
   intro3: 'Or maybe, just grab a cup ☕ and wind down with a story from our user-submitted library:',
 
   actionPrompt: 'So, what are you feeling today?',
+  unknownCommand: 'What was that?',
 
   browseStories: '📚 Browse Stories',
   openLibrary: '📚 Open Library',

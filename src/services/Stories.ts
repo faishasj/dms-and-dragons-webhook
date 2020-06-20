@@ -134,8 +134,7 @@ export const readStory = async (
     if (end) { // End of Story
       exitStory(user, true);
       await wait(4000);
-      await messenger.sendTextMessage(id, Strings.endStory(story.metadata.title));
-      await sendOptions(id);
+      await sendOptions(id, Strings.endStory(story.metadata.title));
     }
 
     updateStoryView(id, { // Record new Story Status
