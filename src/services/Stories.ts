@@ -14,7 +14,7 @@ import {
 import { wait } from '../Utils';
 import Strings from '../Strings';
 import { QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
-import { sendOptions } from './User';
+import { sendOptions, sendPreview } from './User';
 import { newTimestamp } from '../model/Utils';
 
 // Stories Services
@@ -30,6 +30,7 @@ export const directToMyStories = async ({ id }: User): Promise<void> => {
 export const directToLibrary = async ({ id }: User): Promise<void> => {
   const messenger = await getMessenger();
 
+  await sendPreview(id);
   const button = { ...URL_BUTTON, url: BROWSE_STORIES_URL, title: Strings.openLibrary };
   messenger.sendButtonsMessage(id, Strings.openLibraryPrompt, [button as any]);
   messenger.toggleTyping(id, false);

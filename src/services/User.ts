@@ -1,5 +1,5 @@
 import { MESSAGE_TEMPLATE_TYPE, QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
-import { User } from '../Types';
+import { User, Story } from '../Types';
 import { getMessenger, Payloads, waitTyping } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
@@ -31,7 +31,15 @@ export const introduction = async ({ id, name }: User) => {
   await messenger.sendTextMessage(id, Strings.intro3);
   await wait(1000);
 
-  const stories = await storiesPromise;
+  sendPreview(id, await storiesPromise);
+
+  await sendOptions(id);
+};
+
+export const sendPreview = async (id: User['id'], maybeStories?: Story[], storyCount = 10) => {
+  const messenger = await getMessenger();
+  const stories = maybeStories || await getStories(storyCount);
+
   // https://developers.facebook.com/docs/messenger-platform/send-messages/template/generic#carousel
   await messenger.sendTemplateMessage(id, {
     template_type: MESSAGE_TEMPLATE_TYPE.GENERIC,
@@ -42,8 +50,6 @@ export const introduction = async ({ id, name }: User) => {
       buttons: [{ type: 'postback', title: 'Read Now', payload: `${Payloads.READ_NEW_STORY}${story.id}` }],
     })),
   } as any);
-
-  await sendOptions(id);
 };
 
 export const sendOptions = async (id: User['id']) => {

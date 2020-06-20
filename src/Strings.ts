@@ -10,7 +10,7 @@ export default {
 
   browseStories: '📚 Browse Stories',
   openLibrary: '📚 Open Library',
-  openLibraryPrompt: 'Click below to explore the DMs and Dragons Library. 🤓',
+  openLibraryPrompt: 'Click below to explore the full DMs and Dragons Library. 🤓',
 
   openMyStories: '✍️ Create Story',
   openMyStoriesPrompt: 'Click below to open the DM Creator and get writing! 🤔',
