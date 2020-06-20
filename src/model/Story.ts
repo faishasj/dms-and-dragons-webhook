@@ -1,4 +1,4 @@
-import { Story, User, Uri, Step } from '../Types';
+import { Story, User, Uri, Step, Persona } from '../Types';
 import { collection, Collection, SubCollection } from './Utils';
 
 // Story Data
@@ -8,6 +8,7 @@ import { collection, Collection, SubCollection } from './Utils';
 export interface CreateStorySchema {
   authorId: User['id'];
   published: boolean;
+  personas: Persona[];
   metadata: {
     coverPhoto: Uri;
     description: string;
@@ -86,7 +87,7 @@ export const createStory = async (data: CreateStorySchema): Promise<Story> => {
   const story = {
     ...data,
     id: ref.id,
-  } as Story;
+  };
 
   return story;
 };

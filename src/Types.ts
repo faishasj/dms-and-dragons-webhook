@@ -21,6 +21,7 @@ export interface Story {
   id: string;
   authorId: User['id'];
   published: boolean;
+  personas: Persona[];
   metadata: {
     coverPhoto: Uri;
     description: string;
@@ -54,7 +55,14 @@ export interface Step {
   messages: {
     text?: string;
     image?: string;
+    personaId?: Persona['id'];
     waitingTime: number;
     typingTime: number;
   }[];
+}
+
+export interface Persona {
+  id: string;
+  name: string;
+  profilePic: string;
 }
