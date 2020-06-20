@@ -1,14 +1,14 @@
 import { CREATE_STORY_URL, URL_BUTTON, BROWSE_STORIES_URL } from '../Constants';
 import { getMessenger, waitTyping } from '../Messenger';
-import { User, Story, StoryView } from '../Types';
+import { User, Story, StoryView, Step } from '../Types';
 import {
   getUser,
   updateUser,
   getStory,
   createStoryView,
   getStoryView,
-  getStorySteps,
-  getStoryStepById,
+  getStoryStep,
+  getRootStoryStep,
   updateStoryView,
 } from '../model';
 import { wait } from '../Utils';
@@ -75,29 +75,27 @@ export const readStory = async (
   const { id: storyId } = story;
   const storyView = maybeStoryView || await getStoryView(id, storyId);
   if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
-  const { stepCounter, messages } = storyView;
+  const { lastStep, messages } = storyView;
 
-  const steps = await getStorySteps(story.id, stepCounter);
-  if (!steps.length) return console.warn(`Cannot find any steps ${storyId} ${stepCounter}`);
-  let currentStep = null;
-  if (steps.length > 1 && stepCounter > 0) {
-    const previousMessage = messages.find((message) => message.stepCounter === stepCounter - 1);
-    if (previousMessage) {
-      const previousStep = await getStoryStepById(storyId, previousMessage.stepId);
-      if (previousStep) {
-
-        const matchedOption = previousStep.options
-          .find(({ requiredText }) => requiredText.toLowerCase() === text.toLowerCase());
-        if (matchedOption) currentStep = await getStoryStepById(storyId, matchedOption.stepId);
-        else messenger.sendTextMessage(id, story.metadata.failureMessage);
-
-      } else console.warn('Multiple Steps but previous step not found');
-    } else console.warn('Multiple Steps but no previous message found');
-  } else currentStep = steps[0];
+  let currentStep: Step | null = null;
+  if (!lastStep) currentStep = await getRootStoryStep(storyId); // Start of story, root step
+  else {
+    const previousStep = await getStoryStep(storyId, lastStep);
+    if (!previousStep) console.warn('Could not find previous step');
+    else {
+      const { options } = previousStep;
+      const matchedOption = options
+        .find(({ requiredText }) => !requiredText || requiredText.toLowerCase() === text.toLowerCase());
+      if (!matchedOption) messenger.sendTextMessage(id, story.metadata.failureMessage);
+      else {
+        currentStep = await getStoryStep(storyId, matchedOption.stepId);
+        if (!currentStep) console.warn(`Could not get Step from option ${matchedOption}`);
+      }
+    }
+  }
 
 
   if (currentStep) {
-
     for (const { waitingTime, typingTime, text } of currentStep.messages) { // iterative loop to maintain order
       await wait(waitingTime);
       await waitTyping(id, typingTime);
@@ -106,8 +104,8 @@ export const readStory = async (
 
     updateStoryView(id, {
       ...storyView,
-      stepCounter: stepCounter + 1,
-      messages: [...messages, { text, stepCounter, fbMessageId: messageId, stepId: currentStep.id }],
+      lastStep: currentStep.id,
+      messages: [...messages, { text, fbMessageId: messageId, stepId: currentStep.id }],
     });
   }
 

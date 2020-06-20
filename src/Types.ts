@@ -32,10 +32,9 @@ export interface Story {
 
 export interface StoryView {
   id: Story['id'];
-  stepCounter: number;
+  lastStep: Step['id'] | null;
   messages: {
     fbMessageId: string;
-    stepCounter: number;
     stepId: Step['id'];
     text: string;
   }[];
@@ -47,7 +46,7 @@ export interface StoryView {
 
 export interface Step {
   id: string;
-  stepCount: number;
+  root: boolean;
   options: {
     stepId: Step['id'];
     requiredText: string;

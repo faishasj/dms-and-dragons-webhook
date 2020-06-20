@@ -46,9 +46,8 @@ export const getStories = async (count?: number): Promise<Story[]> => {
   return stories;
 };
 /** Get Story Steps */
-export const getStorySteps = async (storyId: Story['id'], stepCount?: Step['stepCount']): Promise<Step[]> => {
-  const ref = collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps);
-  const { docs } = await ((stepCount || stepCount === 0) ? ref.where('stepCount', '==', stepCount) : ref).get();
+export const getStorySteps = async (storyId: Story['id']): Promise<Step[]> => {
+  const { docs } = await collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps).get();
   
   const steps = docs.map(doc => ({
     ...doc.data(),
@@ -57,24 +56,22 @@ export const getStorySteps = async (storyId: Story['id'], stepCount?: Step['step
   return steps;
 };
 /** Get Story Step */
-export const getStoryStep = async (storyId: Story['id'], stepCount: Step['stepCount']): Promise<Step | null> => {
-  const { docs: [doc] } = await collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps)
-    .where('stepCount', '==', stepCount)
-    .limit(1)
-    .get();
-  
-  if (!doc) return null;
+export const getStoryStep = async (storyId: Story['id'], stepId: Step['id']): Promise<Step | null> => {
+  const doc = await collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps).doc(stepId).get();
+  if (!doc.exists) return null;
 
   const step = {
     ...doc.data(),
     id: doc.id,
   } as Step;
   return step;
-}
-/** Get Story Step by ID */
-export const getStoryStepById = async (storyId: Story['id'], stepId: Step['id']): Promise<Step | null> => {
-  const doc = await collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps).doc(stepId).get();
-  if (!doc.exists) return null;
+};
+/** Get Root Story Step */
+export const getRootStoryStep = async (storyId: Story['id']): Promise<Step | null> => {
+  const { docs: [doc] } = await collection(Collection.Stories).doc(storyId).collection(SubCollection.Steps)
+    .where('root', '==', true)
+    .get();
+  if (!doc) return null;
 
   const step = {
     ...doc.data(),

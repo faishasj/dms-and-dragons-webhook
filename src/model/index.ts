@@ -31,5 +31,5 @@ export {
   getStories,
   getStorySteps,
   getStoryStep,
-  getStoryStepById
+  getRootStoryStep,
 } from './Story';

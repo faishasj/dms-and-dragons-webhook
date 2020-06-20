@@ -62,7 +62,7 @@ export const createStoryView = async (userId: User['id'], { storyId, ...data }: 
   const newData: Partial<StoryView> = {
     ...data,
     messages: [],
-    stepCounter: 0,
+    lastStep: null,
     startTime: newTimestamp(),
     lastOpened: newTimestamp(),
     endTime: null,
