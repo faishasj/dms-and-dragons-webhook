@@ -13,7 +13,7 @@ import {
 } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
-import { QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
+import { QUICK_REPLY_TYPE, ATTACHMENT_TYPE } from 'fb-messenger-bot-api';
 import { sendOptions, sendPreview } from './User';
 import { newTimestamp } from '../model/Utils';
 
@@ -111,16 +111,24 @@ export const readStory = async (
     const nextOptions = end ? [] : currentStep.options.filter(({ requiredText }) => requiredText);
 
     // iterative loop to maintain order of messages
-    for (const [i, { waitingTime, typingTime, text }] of currentStep.messages.entries()) {
+    for (const [i, { waitingTime, typingTime, text, image }] of currentStep.messages.entries()) {
+      if (!text && !image) continue; // Bad message data
       await wait(waitingTime);
       await waitTyping(id, typingTime);
       if (i >= currentStep.messages.length -1 && nextOptions.length > 0)
-        await messenger.sendQuickReplyMessage(id, text, nextOptions.map(({ requiredText }) => ({
-          content_type: QUICK_REPLY_TYPE.TEXT,
-          title: requiredText,
-          payload: '',
-        })));
-      else await messenger.sendTextMessage(id, text);
+        await messenger.sendQuickReplyMessage(
+          id,
+          text || { type: ATTACHMENT_TYPE.IMAGE, payload: { url: image } },
+          nextOptions.map(({ requiredText }) => ({
+            content_type: QUICK_REPLY_TYPE.TEXT,
+            title: requiredText,
+            payload: '',
+          }),
+        ));
+      else {
+        if (text) await messenger.sendTextMessage(id, text);
+        else await messenger.sendImageMessage(id, image as string);
+      }
     };
 
     if (end) { // End of Story

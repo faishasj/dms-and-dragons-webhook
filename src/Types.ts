@@ -52,7 +52,8 @@ export interface Step {
     requiredText: string;
   }[];
   messages: {
-    text: string;
+    text?: string;
+    image?: string;
     waitingTime: number;
     typingTime: number;
   }[];
