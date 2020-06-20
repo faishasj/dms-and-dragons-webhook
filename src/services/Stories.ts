@@ -13,6 +13,7 @@ import {
 } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
+import { QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
 
 // Stories Services
 
@@ -96,10 +97,19 @@ export const readStory = async (
 
 
   if (currentStep) {
-    for (const { waitingTime, typingTime, text } of currentStep.messages) { // iterative loop to maintain order
+    const nextOptions = currentStep.options.filter(({ requiredText }) => requiredText);
+
+    // iterative loop to maintain order of messages
+    for (const [i, { waitingTime, typingTime, text }] of currentStep.messages.entries()) {
       await wait(waitingTime);
       await waitTyping(id, typingTime);
-      await messenger.sendTextMessage(id, text);
+      if (i >= currentStep.messages.length -1 && nextOptions.length > 0)
+        await messenger.sendQuickReplyMessage(id, text, nextOptions.map(({ requiredText }) => ({
+          content_type: QUICK_REPLY_TYPE.TEXT,
+          title: requiredText,
+          payload: '',
+        })));
+      else await messenger.sendTextMessage(id, text);
     };
 
     updateStoryView(id, {
