@@ -1,6 +1,6 @@
 import { MESSAGE_TEMPLATE_TYPE, QUICK_REPLY_TYPE } from 'fb-messenger-bot-api';
 import { User, Story } from '../Types';
-import { getMessenger, Payloads, waitTyping } from '../Messenger';
+import { getMessenger, Payloads, waitTyping, sendTextMessage } from '../Messenger';
 import { createUser, getStories } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
@@ -15,20 +15,19 @@ export const newUser = async (userId: User['id']): Promise<User> => {
 };
 
 export const introduction = async ({ id, name }: User) => {
-  const messenger = await getMessenger();
   const storiesPromise = getStories(10);
 
   await waitTyping(id, 2000);
-  await messenger.sendTextMessage(id, Strings.greeting(name));
+  await sendTextMessage(id, Strings.greeting(name));
   await wait(2000);
   await waitTyping(id, 3000);
-  await messenger.sendTextMessage(id, Strings.intro1);
+  await sendTextMessage(id, Strings.intro1);
   await wait(4000);
   await waitTyping(id, 3000);
-  await messenger.sendTextMessage(id, Strings.intro2);
+  await sendTextMessage(id, Strings.intro2);
   await wait(4000);
   await waitTyping(id, 3000);
-  await messenger.sendTextMessage(id, Strings.intro3);
+  await sendTextMessage(id, Strings.intro3);
   await wait(1000);
 
   sendPreview(id, await storiesPromise);
@@ -69,7 +68,6 @@ export const sendOptions = async (id: User['id'], text = Strings.actionPrompt) =
       payload: Payloads.BROWSE_STORIES,
     }
   ]);
-  messenger.toggleTyping(id, false);
 }
 
 

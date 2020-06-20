@@ -1,5 +1,5 @@
 import { CREATE_STORY_URL, URL_BUTTON, BROWSE_STORIES_URL } from '../Constants';
-import { getMessenger, waitTyping } from '../Messenger';
+import { getMessenger, waitTyping, sendTextMessage, sendImageMessage } from '../Messenger';
 import { User, Story, StoryView, Step } from '../Types';
 import {
   getUser,
@@ -37,7 +37,6 @@ export const directToLibrary = async ({ id }: User): Promise<void> => {
 };
 
 export const readNewStory = async (maybeUser: User | User['id'], storyId: Story['id']): Promise<void> => {
-  const messenger = await getMessenger();
   const user = typeof maybeUser === 'string' ? await getUser(maybeUser) : maybeUser;
   if (!user) return console.warn('User does not exist! ' + maybeUser);
   const { id } = user;
@@ -48,7 +47,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   const storyViewPromise = createStoryView(id, { storyId });
 
   await waitTyping(id, 2000);
-  await messenger.sendTextMessage(id, Strings.newStory(story.metadata.title));
+  await sendTextMessage(id, Strings.newStory(story.metadata.title));
   await readStory(user, { text: '', messageId: '' }, storyId, await storyViewPromise);
 };
 
@@ -96,7 +95,7 @@ export const readStory = async (
       const { options } = previousStep;
       const matchedOption = options
         .find(({ requiredText }) => !requiredText || requiredText.toLowerCase() === text.toLowerCase());
-      if (!matchedOption) messenger.sendTextMessage(id, story.metadata.failureMessage);
+      if (!matchedOption) sendTextMessage(id, story.metadata.failureMessage);
       else {
         currentStep = await getStoryStep(storyId, matchedOption.stepId);
         if (!currentStep) console.warn(`Could not get Step from option ${matchedOption}`);
@@ -111,10 +110,10 @@ export const readStory = async (
     const nextOptions = end ? [] : currentStep.options.filter(({ requiredText }) => requiredText);
 
     // iterative loop to maintain order of messages
-    for (const [i, { waitingTime, typingTime, text, image }] of currentStep.messages.entries()) {
+    for (const [i, { waitingTime, typingTime, text, image, personaId }] of currentStep.messages.entries()) {
       if (!text && !image) continue; // Bad message data
       await wait(waitingTime);
-      await waitTyping(id, typingTime);
+      await waitTyping(id, typingTime, personaId);
       if (i >= currentStep.messages.length -1 && nextOptions.length > 0)
         await messenger.sendQuickReplyMessage(
           id,
@@ -126,8 +125,8 @@ export const readStory = async (
           }),
         ));
       else {
-        if (text) await messenger.sendTextMessage(id, text);
-        else await messenger.sendImageMessage(id, image as string);
+        if (text) await sendTextMessage(id, text, personaId);
+        if (image) await sendImageMessage(id, image, personaId);
       }
     };
 
@@ -144,7 +143,4 @@ export const readStory = async (
       messages: [...messages, { text, fbMessageId: messageId, stepId: currentStep.id }],
     });
   }
-
-
-  messenger.toggleTyping(id, false);
 };

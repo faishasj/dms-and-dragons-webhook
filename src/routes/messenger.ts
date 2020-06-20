@@ -16,7 +16,6 @@ router.post('/', asyncUtil(async (req, res) => {
   const { body } = req;
 
   const initPromise = getSecret('PAGE_ACCESS_TOKEN').then(tok => init(tok));
-  
   // Parsing
   const parsed = FacebookMessageParser.parsePayload(body);
   const message = parsed[0];
@@ -27,9 +26,9 @@ router.post('/', asyncUtil(async (req, res) => {
   const { text, mid: messageId } = message.message || {};
 
   // Basic Message Acknowledgment
-  const messenger = await getMessenger();
-  messenger.markSeen(id);
-  messenger.toggleTyping(id, true);
+  // const messenger = await getMessenger();
+  // messenger.markSeen(id);
+  // messenger.toggleTyping(id, true);
 
   // User Data
   let user = await getUser(id);
