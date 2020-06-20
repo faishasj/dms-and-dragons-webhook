@@ -22,6 +22,12 @@ export enum TemplateType {
   Receipt = 'receipt',
 }
 
+export enum SenderAction {
+  MarkSeen = 'mark_seen',
+  TypingOn = 'typing_on',
+  TypingOff = 'typing_off',
+}
+
 export interface TextBody { text: string; }
 
 export interface AttachmentBody {

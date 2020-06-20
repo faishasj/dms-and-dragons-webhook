@@ -1,8 +1,7 @@
 import { FacebookMessagingAPIClient, FacebookProfileAPIClient } from 'fb-messenger-bot-api';
 import axios from 'axios';
 import { getSecret } from '../Secrets';
-import { User, Persona } from '../Types';
-import { wait } from '../Utils';
+import { Persona } from '../Types';
 
 let messagingClient: FacebookMessagingAPIClient;
 let profileClient: FacebookProfileAPIClient;
@@ -32,13 +31,6 @@ export const getProfile = async (): Promise<FacebookProfileAPIClient> => {
   }
   return profileClient;
 };
-
-export const waitTyping = async (userId: User['id'], duration = 1000): Promise<void> => {
-  const messenger = await getMessenger();
-  await messenger.toggleTyping(userId, true);
-  await wait(duration);
-  messenger.toggleTyping(userId, false);
-}
 
 
 // Messenger Platform not supported by library
@@ -91,9 +83,15 @@ export const getPersona = async (personaId: string): Promise<Persona> => {
 
 export {
   init,
+} from './Setup';
+
+export {
+  waitTyping,
 } from './Utils';
 
 export {
   sendImageMessage,
   sendTextMessage,
+  toggleTyping,
+  markSeen,
 } from './Messages';
