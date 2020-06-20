@@ -1,8 +1,8 @@
 import { FacebookMessagingAPIClient, FacebookProfileAPIClient } from 'fb-messenger-bot-api';
 import axios from 'axios';
-import { getSecret } from './Secrets';
-import { User, Persona } from './Types';
-import { wait } from './Utils';
+import { getSecret } from '../Secrets';
+import { User, Persona } from '../Types';
+import { wait } from '../Utils';
 
 let messagingClient: FacebookMessagingAPIClient;
 let profileClient: FacebookProfileAPIClient;
@@ -82,3 +82,18 @@ export const getPersona = async (personaId: string): Promise<Persona> => {
 
   return { id, name, profilePic: profile_picture_url };
 };
+
+
+/**
+ * Custom Wrapper
+ * Ideally everything would be setup here
+ */
+
+export {
+  init,
+} from './Utils';
+
+export {
+  sendImageMessage,
+  sendTextMessage,
+} from './Messages';
