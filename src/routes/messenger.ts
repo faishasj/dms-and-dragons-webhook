@@ -46,6 +46,7 @@ router.post('/', asyncUtil(async (req, res) => {
   if (activeStory && !!text && !!messageId) {
     if (postbackPayload === Payloads.EXIT_STORY) exitStory(user); // Menu option possible from active story
     else await readStory(user, { text, messageId });
+    await setUserProcessingStatus(userId, false);
     return res.status(200).send();
   }
 
@@ -63,7 +64,6 @@ router.post('/', asyncUtil(async (req, res) => {
   else sendOptions(userId);
 
   await setUserProcessingStatus(userId, false);
-
   return res.status(200).send();
 }));
 
