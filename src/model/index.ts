@@ -26,7 +26,6 @@ export {
 export {
   CreateStorySchema,
 
-  createStory,
   getStory,
   getStories,
   getStorySteps,

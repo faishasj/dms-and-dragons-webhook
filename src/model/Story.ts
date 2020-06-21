@@ -80,14 +80,3 @@ export const getRootStoryStep = async (storyId: Story['id']): Promise<Step | nul
   } as Step;
   return step;
 };
-/** Create Story */
-export const createStory = async (data: CreateStorySchema): Promise<Story> => {
-  const ref = await collection(Collection.Stories).add(data);
-
-  const story = {
-    ...data,
-    id: ref.id,
-  };
-
-  return story;
-};
