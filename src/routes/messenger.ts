@@ -26,9 +26,9 @@ router.post('/', asyncUtil(async (req, res) => {
   const { text, mid: messageId } = message.message || {};
 
   // Basic Message Acknowledgment
-  // const messenger = await getMessenger();
-  // messenger.markSeen(id);
-  // messenger.toggleTyping(id, true);
+  const messenger = await getMessenger();
+  messenger.markSeen(id);
+  messenger.toggleTyping(id, true);
 
   // User Data
   let user = await getUser(id);

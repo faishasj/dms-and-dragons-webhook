@@ -10,7 +10,7 @@ const sendMessage = async (psid: string, messageBody: MessageBody, personaId?: s
     const { data } = await getApi().post<MessengerSuccess>('/me/messages', {
       recipient: { id: psid },
       message: messageBody,
-      persona_id: '554214075459793',
+      persona_id: personaId,
     });
     return data;
   } catch (e) {
@@ -25,7 +25,7 @@ const senderAction = async (psid: string, senderAction: SenderAction, personaId?
     const { data } = await getApi().post<MessengerSuccess>('/me/messages', {
       recipient: { id: psid },
       sender_action: senderAction,
-      persona_id: '554214075459793',
+      persona_id: personaId,
     });
     return data;
   } catch (e) {
