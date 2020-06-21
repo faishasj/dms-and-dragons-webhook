@@ -22,10 +22,10 @@ export const introduction = async ({ id, name }: User) => {
   await wait(2000);
   await waitTyping(id, 3000);
   await sendTextMessage(id, Strings.intro1);
-  await wait(4000);
+  await wait(2000);
   await waitTyping(id, 3000);
   await sendTextMessage(id, Strings.intro2);
-  await wait(4000);
+  await wait(3000);
   await waitTyping(id, 3000);
   await sendTextMessage(id, Strings.intro3);
   await wait(1000);
