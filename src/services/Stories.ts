@@ -48,6 +48,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
 
   await waitTyping(id, 2000);
   await sendTextMessage(id, Strings.newStory(story.metadata.title));
+  await wait(4000);
   await readStory(user, { text: '', messageId: '' }, storyId, await storyViewPromise);
 };
 
