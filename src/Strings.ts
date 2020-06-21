@@ -17,20 +17,20 @@ export default {
   openMyStoriesPrompt: 'Click below to open the DM Creator and get writing! 🤔',
 
   exitStory: '🚫 Exit Story',
-  cannotExit: 'Not currently in a story. Browse Stories to find something great!',
-  exit: 'Hope you enjoyed! Keep reading this story from this point whenever you want',
+  cannotExit: 'You\'re not currently reading a story. Browse Stories to find something great!',
+  exit: 'Hope you enjoyed! You can keep reading this story from this point whenever you want.',
 
   newStory: (title: string) => {
     const storyIntros = [
-      `Without further ado... ${title}`,
-      `Presenting... ${title}`,
+      `Without further ado... "${title}"`,
+      `Presenting... "${title}"`,
     ];
     return storyIntros[Math.floor(Math.random() * storyIntros.length)];
   },
   endStory: (title: string) => {
     const storyConclusions = [
-      `That concludes ${title}. Thanks for reading`,
-      `That is the end of ${title}. Thanks for reading`,
+      `That concludes "${title}". Thanks for reading!`,
+      `That was the end of "${title}". Thanks for reading!`,
     ];
     return storyConclusions[Math.floor(Math.random() * storyConclusions.length)];
   },
