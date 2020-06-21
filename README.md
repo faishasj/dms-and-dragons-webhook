@@ -46,11 +46,9 @@
     ./ngrok start --all
     ```
 
-1. **Include the https tunnel domains where necessary and setup environment variables.**
+1. **If tunneling the webview, include its https domain as an environment variable for the webhook.**
 
-    Copy the **https** domain for the webhook, add `/webhook` at the end, and use it to modify the callback URL for your app on developers.facebook.com/apps under Products > Messenger > Settings > Webhooks. You will need your verify token for this.
-
-    If you also are tunneling the webview, copy the **https** domain for the webview and add it as an environment variable `DEV_WEBVIEW_URL` in .env.
+    Only if you are tunneling the webview, copy the **https** domain for the webview and add it as an environment variable `DEV_WEBVIEW_URL` in .env.
 
     Make sure you also have the `GOOGLE_SERVICE_ACCOUNT` in your .env.
 
@@ -68,3 +66,7 @@
     ```zsh
     $ yarn start
     ```
+
+1. **Update the callback URL in the settings for the Facebook App.**
+
+    Copy the **https** domain for the webhook, add `/webhook` at the end, and use it to modify the callback URL for your app on developers.facebook.com/apps under Products > Messenger > Settings > Webhooks. You will need your verify token for this.
