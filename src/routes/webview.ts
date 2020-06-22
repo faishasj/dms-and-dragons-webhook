@@ -13,8 +13,7 @@ router.post('/readStory', asyncUtil<{}, {}, ReadStoryBody>(async (req, res) => {
   if (!storyId || !userId || typeof storyId !== 'string' || typeof userId !== 'string')
     return res.status(400).send();
 
-  await getSecret('PAGE_ACCESS_TOKEN').then(token => init(token));
-  await readNewStory(userId, storyId);
+  getSecret('PAGE_ACCESS_TOKEN').then(token => init(token)).then(() => readNewStory(userId, storyId));
   return res.status(200).send();
 }));
 
