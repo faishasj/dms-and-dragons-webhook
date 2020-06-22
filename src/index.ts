@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 
 import { MessengerRouter, TestingRouter, WebviewRouter } from './routes';
 
@@ -8,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 1337;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 
 
