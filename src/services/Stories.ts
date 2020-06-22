@@ -49,7 +49,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   await waitTyping(id, 2000);
   await sendTextMessage(id, Strings.newStory(story.metadata.title));
   await wait(4000);
-  await readStory(user, { text: '', messageId: '' }, storyId, await storyViewPromise);
+  await readStory(user, { text: '', messageId: '' }, story, await storyViewPromise);
 };
 
 export const exitStory = async ({ id, activeStory }: User, end = false): Promise<void> => {
@@ -69,17 +69,20 @@ export const exitStory = async ({ id, activeStory }: User, end = false): Promise
 export const readStory = async (
   user: User,
   { text, messageId }: { text: string; messageId: string },
-    maybeStoryId?: Story['id'],
+    maybeStory?: Story,
     maybeStoryView?: StoryView,
 ): Promise<void> => {
   const { id, activeStory } = user;
-  if (!maybeStoryId && !activeStory) return console.warn(`Reading with no active story! ${maybeStoryId} ${activeStory}`)
+  if (!activeStory) return console.warn(`Reading with no active story! ${activeStory}`)
+  if (!!maybeStory && (maybeStory.id !== activeStory))
+    return console.warn(`Passed in story is not the active story! ${maybeStory.id} ${activeStory}`);
+
   const messenger = await getMessenger();
 
   /** Basic Story Data */
 
-  const story = await getStory((maybeStoryId || activeStory) as string);
-  if (!story) return console.warn(`Cannot find Story ${maybeStoryId} ${activeStory}`);
+  const story = maybeStory || await getStory(activeStory as string);
+  if (!story) return console.warn(`Cannot find Story ${maybeStory} ${activeStory}`);
   const { id: storyId } = story;
   const storyView = maybeStoryView || await getStoryView(id, storyId);
   if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
