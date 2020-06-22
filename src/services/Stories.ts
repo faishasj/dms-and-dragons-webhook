@@ -10,6 +10,7 @@ import {
   getStoryStep,
   getRootStoryStep,
   updateStoryView,
+  getStorySteps,
 } from '../model';
 import { wait } from '../Utils';
 import Strings from '../Strings';
@@ -49,7 +50,7 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   await waitTyping(id, 2000);
   await sendTextMessage(id, Strings.newStory(story.metadata.title));
   await wait(4000);
-  await readStory(user, { text: '', messageId: '' }, story, await storyViewPromise);
+  await readStory({ ...user, activeStory: storyId }, { text: '', messageId: '' }, story, await storyViewPromise, true);
 };
 
 export const exitStory = async ({ id, activeStory }: User, end = false): Promise<void> => {
@@ -69,8 +70,9 @@ export const exitStory = async ({ id, activeStory }: User, end = false): Promise
 export const readStory = async (
   user: User,
   { text, messageId }: { text: string; messageId: string },
-    maybeStory?: Story,
-    maybeStoryView?: StoryView,
+  maybeStory?: Story,
+  maybeStoryView?: StoryView,
+  tryDisplayPreviousStep = false,
 ): Promise<void> => {
   const { id, activeStory } = user;
   if (!activeStory) return console.warn(`Reading with no active story! ${activeStory}`)
@@ -86,7 +88,18 @@ export const readStory = async (
   const { id: storyId } = story;
   const storyView = maybeStoryView || await getStoryView(id, storyId);
   if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
-  const { lastStep, messages } = storyView;
+  const { lastStep } = storyView;
+  const start = !lastStep;
+  const displayPrevious = tryDisplayPreviousStep && !start;
+  const previousMessage = displayPrevious
+    ? storyView.messages.filter(({ archived }) => !archived).find(({ stepId }) => stepId === lastStep)
+    : undefined;
+  if (displayPrevious && !previousMessage) return console.warn('Cannot find previous message to display');
+  const userText = displayPrevious ? previousMessage?.text as string : text;
+  console.log('START: ', start);
+  console.log('SHOW PREVIOUS: ', displayPrevious);
+  console.log('PREVIOUS MESSAGE: ', previousMessage);
+  console.log('USER TEXT: ', userText);
 
   /** Determining Step/Position in Story */
 
@@ -96,13 +109,16 @@ export const readStory = async (
     const previousStep = await getStoryStep(storyId, lastStep);
     if (!previousStep) console.warn('Could not find previous step');
     else {
-      const { options } = previousStep;
-      const matchedOption = options
-        .find(({ requiredText }) => !requiredText || requiredText.toLowerCase() === text.toLowerCase());
-      if (!matchedOption) sendTextMessage(id, story.metadata.failureMessage);
+      if (displayPrevious) currentStep = previousStep;
       else {
-        currentStep = await getStoryStep(storyId, matchedOption.stepId);
-        if (!currentStep) console.warn(`Could not get Step from option ${matchedOption}`);
+        const { options } = previousStep;
+        const matchedOption = options
+          .find(({ requiredText }) => !requiredText || requiredText.toLowerCase() === text.toLowerCase());
+        if (!matchedOption) sendTextMessage(id, story.metadata.failureMessage);
+        else {
+          currentStep = await getStoryStep(storyId, matchedOption.stepId);
+          if (!currentStep) console.warn(`Could not get Step from option ${matchedOption}`);
+        }
       }
     }
   }
@@ -110,15 +126,16 @@ export const readStory = async (
   /** Story Messages to user */
 
   if (currentStep) {
-    const end = !currentStep.options || currentStep.options.length <= 0;
-    const nextOptions = end ? [] : currentStep.options.filter(({ requiredText }) => requiredText);
+    const { options, messages } = currentStep;
+    const end = !options || options.length <= 0;
+    const nextOptions = end ? [] : options.filter(({ requiredText }) => requiredText);
 
     // iterative loop to maintain order of messages
-    for (const [i, { waitingTime, typingTime, text, image, personaId }] of currentStep.messages.entries()) {
+    for (const [i, { waitingTime, typingTime, text, image, personaId }] of messages.entries()) {
       if (!text && !image) continue; // Bad message data
       await wait(waitingTime);
       await waitTyping(id, typingTime, personaId);
-      if (i >= currentStep.messages.length -1 && nextOptions.length > 0)
+      if (i >= messages.length -1 && nextOptions.length > 0)
         await messenger.sendQuickReplyMessage(
           id,
           text || { type: ATTACHMENT_TYPE.IMAGE, payload: { url: image } },
@@ -140,12 +157,13 @@ export const readStory = async (
       await sendOptions(id, Strings.endStory(story.metadata.title));
     }
 
-    updateStoryView(id, { // Record new Story Status
-      ...storyView,
-      lastStep: end ? null : currentStep.id, // Reset to start if it was the end
-      endTime: end ? newTimestamp() : null,
-      messages: [...messages, { text, fbMessageId: messageId, stepId: currentStep.id, archived: false }]
-        .map(mess => end ? { ...mess, archived: true } : mess), // If end, mark all as archived
-    });
+    if (!displayPrevious)
+      updateStoryView(id, { // Record new Story Status
+        ...storyView,
+        lastStep: end ? null : currentStep.id, // Reset to start if it was the end
+        endTime: end ? newTimestamp() : null,
+        messages: [...storyView.messages, { text, fbMessageId: messageId, stepId: currentStep.id, archived: false }]
+          .map(mess => end ? { ...mess, archived: true } : mess), // If end, mark all as archived
+      });
   }
 };
