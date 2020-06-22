@@ -144,7 +144,8 @@ export const readStory = async (
       ...storyView,
       lastStep: end ? null : currentStep.id, // Reset to start if it was the end
       endTime: end ? newTimestamp() : null,
-      messages: [...messages, { text, fbMessageId: messageId, stepId: currentStep.id }],
+      messages: [...messages, { text, fbMessageId: messageId, stepId: currentStep.id, archived: false }]
+        .map(mess => end ? { ...mess, archived: true } : mess), // If end, mark all as archived
     });
   }
 };
