@@ -48,8 +48,6 @@ export const readNewStory = async (maybeUser: User | User['id'], storyId: Story[
   const storyViewPromise = createStoryView(id, { storyId });
 
   await waitTyping(id, 2000);
-  await sendTextMessage(id, Strings.newStory(story.metadata.title));
-  await wait(4000);
   await readStory({ ...user, activeStory: storyId }, { text: '', messageId: '' }, story, await storyViewPromise, true);
 };
 
@@ -85,7 +83,7 @@ export const readStory = async (
 
   const story = maybeStory || await getStory(activeStory as string);
   if (!story) return console.warn(`Cannot find Story ${maybeStory} ${activeStory}`);
-  const { id: storyId } = story;
+  const { id: storyId, metadata: { title, failureMessage } } = story;
   const storyView = maybeStoryView || await getStoryView(id, storyId);
   if (!storyView) return console.warn(`Cannot find existing Story View ${id} ${storyId}`);
   const { lastStep } = storyView;
@@ -96,10 +94,14 @@ export const readStory = async (
     : undefined;
   if (displayPrevious && !previousMessage) return console.warn('Cannot find previous message to display');
   const userText = displayPrevious ? previousMessage?.text as string : text;
-  console.log('START: ', start);
-  console.log('SHOW PREVIOUS: ', displayPrevious);
-  console.log('PREVIOUS MESSAGE: ', previousMessage);
-  console.log('USER TEXT: ', userText);
+
+  if (start) {
+    await sendTextMessage(id, Strings.newStory(title));
+    await wait(4000);
+  } else if (displayPrevious) {
+    await sendTextMessage(id, Strings.continueStory(title));
+    await wait(4000);
+  }
 
   /** Determining Step/Position in Story */
 
@@ -114,7 +116,7 @@ export const readStory = async (
         const { options } = previousStep;
         const matchedOption = options
           .find(({ requiredText }) => !requiredText || requiredText.toLowerCase() === text.toLowerCase());
-        if (!matchedOption) sendTextMessage(id, story.metadata.failureMessage);
+        if (!matchedOption) sendTextMessage(id, failureMessage);
         else {
           currentStep = await getStoryStep(storyId, matchedOption.stepId);
           if (!currentStep) console.warn(`Could not get Step from option ${matchedOption}`);
@@ -154,7 +156,7 @@ export const readStory = async (
     if (end) { // End of Story
       exitStory(user, true);
       await wait(4000);
-      await sendOptions(id, Strings.endStory(story.metadata.title));
+      await sendOptions(id, Strings.endStory(title));
     }
 
     if (!displayPrevious)

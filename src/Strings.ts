@@ -34,4 +34,5 @@ export default {
     ];
     return storyConclusions[Math.floor(Math.random() * storyConclusions.length)];
   },
+  continueStory: (title: string) => `Continuing with "${title}"...`,
 };
