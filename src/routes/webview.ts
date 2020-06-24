@@ -19,7 +19,7 @@ router.post('/readStory', asyncUtil<{}, {}, ReadStoryBody>(async (req, res) => {
 
 
 interface CreatePersonaBody { name: string; profilePic: string; }
-router.post('createPersona', asyncUtil<{}, {}, CreatePersonaBody>(async (req, res) => {
+router.post('/createPersona', asyncUtil<{}, {}, CreatePersonaBody>(async (req, res) => {
   const { name, profilePic } = req.body;
   if (!name || !profilePic || typeof name !== 'string' || typeof profilePic !== 'string')
     res.status(400).send();
